@@ -34,6 +34,9 @@ class Performance < ActiveRecord::Base
 
   # Avoid a Stage running from Performances with the most important Role
   validate_on_update :avoid_downgrading_only_one_with_highest_role
+
+  validate :role_belongs_to_same_stage
+
   before_destroy :avoid_destroying_only_one_with_highest_role
 
   authorization_delegate(:stage)
@@ -61,4 +64,13 @@ class Performance < ActiveRecord::Base
       return false
     end
   end
+  
+  def role_belongs_to_same_stage
+    
+    if role.stage_type != stage_type
+      errors.add(:role_id, I18n.t('performance.errors.the_role_should_not_belong_to_a_different_stage_type'))
+    end
+    
+  end
+  
 end

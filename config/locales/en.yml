@@ -136,6 +136,9 @@ en:
     show_title: "Tagged with {{tag}}"
 
   performance:
+    errors:
+      stage_should_not_run_out_of_performances_with_first_role: "The stage should not run out of performances with the first role."
+      the_role_should_not_belong_to_a_different_stage_type: "The role should not belong to a different stage type."
     other: "Performances"
     other_in: "Performances in {{stage}}"
     new: "New Performance"

@@ -134,6 +134,9 @@ es:
     show_title: "Etiqueta '{{tag}}'"
 
   performance:
+    errors:
+      stage_should_not_run_out_of_performances_with_first_role: "El escenario no debería quedarse sin integrantes del primer rol."
+      the_role_should_not_belong_to_a_different_stage_type: "El rol no debería pertenecer a un tipo de escenario diferente."
     other: "Integrantes"
     other_in: "Integrantes de {{stage}}"
     new: "Nuevo Integrante"
