@@ -43,19 +43,22 @@ module ActionView #:nodoc:
       # Options:
       # title:: <tt>title</tt> attribute of the <tt>image_tag</tt>
       # alt:: <tt>alt</tt> attribute of the <tt>image_tag</tt>
+      # id:: <tt>id</tt> attribute of the <tt>image_tag</tt>
       def logo(resource, options = {})
         options[:size] ||= 16
         url = options.delete(:url)
         alt = options.delete(:alt) || "[ #{ resource.respond_to?(:name) ? sanitize(resource.name) : resource.class } logo ]"
         title = options.delete(:title) || (resource.respond_to?(:title) ? sanitize(resource.title) : resource.class.to_s)
-
+        id = options.delete(:id)
+        
         returning "" do |html|
     #      html << "<div class=\"logo logo-#{ options[:size] }\">"
 
           image = image_tag(logo_image_path(resource, options),
                             :alt => alt,
                             :title => title,
-                            :class => 'logo')
+                            :class => 'logo',
+                            :id => id)
 
           html << link_to_if(url, image, url, :class => 'logo')
 
