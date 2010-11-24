@@ -187,5 +187,13 @@ module ActionController
         selected | candidates.select{ |c| c.is_a?(type) }
       end
     end
+    
+    def save_location
+      store_location(params[:redirect_to]) if params[:redirect_to].present? &&
+      # Prevent redirecting to other host
+      params[:redirect_to] =~ /^\//
+    end 
+    
+    
   end
 end
