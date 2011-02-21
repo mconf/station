@@ -7,7 +7,7 @@ class Admission < ActiveRecord::Base
   belongs_to :introducer, :polymorphic => true
   belongs_to :role
 
-  attr_protected :candidate_id, :candidate_type, :candidate 
+  attr_protected :candidate_id, :candidate_type, :candidate
   attr_protected :group_id, :group_type, :group
 
 
@@ -23,7 +23,7 @@ class Admission < ActiveRecord::Base
                           :scope => [ :group_id, :group_type ]
   validates_format_of :email, :with => /^[\w\d._%+-]+@[\w\d.-]+\.[\w]{2,}$/
 
-  validate_on_create :candidate_without_role
+  validate :candidate_without_role, :on => :create
   validate :candidate_is_not_introducer
 
   after_save :to_performance!
@@ -32,7 +32,7 @@ class Admission < ActiveRecord::Base
                                  :email,
                                  :group,
                                  :role ]
-  named_scope :pending, lambda { 
+  scope :pending, lambda {
     { :conditions => { :processed_at => nil } }
   }
 
@@ -48,8 +48,8 @@ class Admission < ActiveRecord::Base
 
   # State of this Admission. Values are :not_processed, :accepted or :discarded
   def state
-    processed? ? 
-      accepted? ? 
+    processed? ?
+      accepted? ?
        :accepted :
        :discarded :
       :not_processed

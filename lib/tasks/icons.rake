@@ -7,7 +7,7 @@ namespace :station do
     namespace :oxygen do
       desc "Copy oxygen icons from source_dir to destination_dir"
       task :copy do
-        icons = YAML.load_file("#{ RAILS_ROOT }/config/icons-oxygen.yml")
+        icons = YAML.load_file("#{ Rails.root.to_s }/config/icons-oxygen.yml")
 
         # Mimetypes
         #
@@ -18,7 +18,7 @@ namespace :station do
             command = "cp "
             command += File.join(icons['source_dir'], "#{ size }x#{ size }", "mimetypes", mime_type)
             command += " "
-            command += File.join(RAILS_ROOT, icons['destination_dir'], size.to_s)
+            command += File.join(Rails.root.to_s, icons['destination_dir'], size.to_s)
 
             system command
           end
@@ -35,7 +35,7 @@ namespace :station do
             command = "cp "
             command += File.join(icons['source_dir'], "#{ size }x#{ size }", resource['dir'], resource['file'])
             command += " "
-            command += File.join(RAILS_ROOT, icons['destination_dir'], size.to_s, resource['name'])
+            command += File.join(Rails.root.to_s, icons['destination_dir'], size.to_s, resource['name'])
 
             system command
           end
@@ -53,7 +53,7 @@ namespace :station do
             command = "cp "
             command += File.join(icons['source_dir'], "#{ size }x#{ size }", resource['dir'], resource['file'])
             command += " "
-            command += File.join(RAILS_ROOT, icons['destination_dir'], size.to_s, resource['new-name'])
+            command += File.join(Rails.root.to_s, icons['destination_dir'], size.to_s, resource['new-name'])
 
             system command
           end
