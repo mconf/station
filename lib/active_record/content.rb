@@ -5,11 +5,11 @@ module ActiveRecord #:nodoc:
   # Include this functionality in your models using ActsAsMethods#acts_as_content
   #
   # == Named Scope
-  # You can use the named_scope +in(container)+ to get all contents in some Container.
+  # You can use the scope +in(container)+ to get all contents in some Container.
   #   Content.in(some_container) #=> Array of contents in the container
   #
   # This named scope is used in StationResources controller, in index and show methods.
-  # 
+  #
   # == Resource Controllers
   # StationResources provides with some facilities when managing resources that
   # are contents also.
@@ -20,19 +20,19 @@ module ActiveRecord #:nodoc:
   #  /projects/1/tasks #=> each task in @tasks is in project-1
   #
   # === show
-  # Content resource is searched within the container named scope if a Container 
+  # Content resource is searched within the container named scope if a Container
   # is provided in the path
   #
   #  /projects/1/tasks/1 #=> task-1 must belong to project-1
   #
   # === create
   # Automatically set up container relation
-  #  
+  #
   #  /projects/1/tasks #=> when posting to this path, the new task is created inside projects-1
   #
   # == Authorization
   # The Content incorporates an authorization block that delegates permissions to its Container.
-  # 
+  #
   # This authorization block ask only single permissions, i.e. a Permission which objective is nil.
   #
   #   class Task
@@ -42,13 +42,13 @@ module ActiveRecord #:nodoc:
   #
   #   task.authorize?(:update) #=> will ask task.project.authorize?([ :update, :content ]) ||
   #                            #            task.project.authorize?([ :update, :task ])
-  #   
+  #
   #
   module Content
     class << self
       def included(base) # :nodoc:
-        # Fake named_scope to ActiveRecord instances that aren't Contents
-        base.named_scope :in, lambda { |container| {} }
+        # Fake scope to ActiveRecord instances that aren't Contents
+        base.scope :in, lambda { |container| {} }
         base.class_eval do
           class << self
             __station_deprecate_method__(:in_container, :in)
@@ -85,7 +85,7 @@ module ActiveRecord #:nodoc:
         end
         attr_protected :container, :container_id, :container_type
 
-        named_scope :in, lambda { |container|
+        scope :in, lambda { |container|
           { :conditions => container_conditions(container) }
         }
 
@@ -132,7 +132,7 @@ module ActiveRecord #:nodoc:
       # By default uses roots.in(container) find scope
       #
       # Options:
-      # container:: The container passed to in(container) named_scope
+      # container:: The container passed to in(container) scope
       def content_inquirer_scope(options = {})
         inquirer_scope = roots.in(options[:container]).scope(:find)
       end

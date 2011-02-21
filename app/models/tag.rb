@@ -3,15 +3,15 @@ class Tag < ActiveRecord::Base
 
   belongs_to :container, :polymorphic => true
 
-  named_scope :popular, :order => "taggings_count DESC"
+  scope :popular, :order => "taggings_count DESC"
 
   # If database speed becomes an issue, you could remove these validations and rescue the ActiveRecord database constraint errors instead.
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => [ :container_id, :container_type ]
-  
+
   # Change this validation if you need more complex tag names.
   validates_format_of :name, :with => /^[\w\_\ \-]+$/, :message => "can not contain special characters"
-  
+
   has_many :taggings, :dependent => :destroy
 
   for taggable in ActiveRecord::Taggable.symbols
@@ -27,7 +27,8 @@ class Tag < ActiveRecord::Base
 
 
   # Callback to strip extra spaces from the tagname before saving it. If you allow tags to be renamed later, you might want to use the <tt>before_save</tt> callback instead.
-  def before_create 
+  before_create :before_create_method
+  def before_create_method
     self.name = name.strip.squeeze(" ")
   end
 

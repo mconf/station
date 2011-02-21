@@ -1,77 +1,94 @@
-ActionController::Routing::Routes.draw do |map|
-  map.openid_server 'openid_server', :controller => 'openid_server'
+Rails.application.routes.draw do
 
-  map.open_id_complete 'session/open_id_complete', 
-                       { :controller => 'sessions', 
-                         :action     => 'create',
-                         :conditions => { :method => :get },
-                         :open_id_complete => true }
+  #map.openid_server 'openid_server', :controller => 'openid_server'
+  resource :openid_server
 
-  map.resource :session
+#TODO
+  get 'session/open_id_complete', :to => 'sessions#create', :open_id_complete => true, :as => 'open_id_complete'
+  #map.open_id_complete 'session/open_id_complete',
+  #                     { :controller => 'sessions',
+  #                       :action     => 'create',
+  #                       :conditions => { :method => :get },
+  #                       :open_id_complete => true }
 
-  map.login 'login',   :controller => 'sessions', :action => 'new'
-  map.logout 'logout', :controller => 'sessions', :action => 'destroy'
+  resource :session
+
+  match 'login', :to => 'sessions#new', :as => 'login'
+  match 'logout', :to => 'sessions#destroy', :as => 'logout'
 
   if ActiveRecord::Agent.activation_class
-    map.activate 'activate/:activation_code', 
-             :controller => ActiveRecord::Agent.activation_class.to_s.tableize, 
-             :action => 'activate', 
-             :activation_code => nil
+    match 'activate/:activation_code', :to => "#{ActiveRecord::Agent.activation_class.to_s.tableize}#activate",
+      :as => 'activate', :activation_code => nil
+    #map.activate 'activate/:activation_code',
+    #         :controller => ActiveRecord::Agent.activation_class.to_s.tableize,
+    #         :action => 'activate',
+    #         :activation_code => nil
 
-    map.lost_password 'lost_password', 
-                    :controller => ActiveRecord::Agent.activation_class.to_s.tableize,
-                    :action => 'lost_password'
-    map.reset_password 'reset_password/:reset_password_code', 
-                   :controller => ActiveRecord::Agent.activation_class.to_s.tableize,
-                   :action => 'reset_password',
-                   :reset_password_code => nil
+    match 'lost_password', :to => "#{ActiveRecord::Agent.activation_class.to_s.tableize}#lost_password",
+      :as => 'lost_password'
+    #map.lost_password 'lost_password',
+    #                :controller => ActiveRecord::Agent.activation_class.to_s.tableize,
+    #                :action => 'lost_password'
+    match 'reset_password/:reset_password_code', :to => "#{ActiveRecord::Agent.activation_class.to_s.tableize}#reset_password",
+      :as => 'reset_password', :reset_password_code => nil
+    #map.reset_password 'reset_password/:reset_password_code',
+    #               :controller => ActiveRecord::Agent.activation_class.to_s.tableize,
+    #               :action => 'reset_password',
+    #               :reset_password_code => nil
   end
 
   if ActiveRecord::Agent::authentication_classes(:openid).any?
-    map.resources :open_id_ownings
+    resources :open_id_ownings
   end
 
-  map.resources :tags
+  resources :tags
 
-  map.resource :site do |site|
+  resource :site do
     if Site.table_exists?
-      site.with_options :requirements => { :site_id => Site.current.id } do |local_site|
-        local_site.resources :performances
-        local_site.resources *ActiveRecord::Resource.symbols
+# TODO
+      with_options :requirements => { :site_id => Site.current.id } do
+        resources :performances
+        resources *ActiveRecord::Resource.symbols
       end
+#
     end
   end
 
-  map.resources *( ( ActiveRecord::Resource.symbols | 
-                 ActiveRecord::Content.symbols  | 
-                 ActiveRecord::Agent.symbols ) - 
-                ActiveRecord::Container.symbols 
-             )
+  resources *( ( ActiveRecord::Resource.symbols |
+                 ActiveRecord::Content.symbols  |
+                 ActiveRecord::Agent.symbols ) -
+                 ActiveRecord::Container.symbols )
 
   ActiveRecord::Container.symbols.each do |container_sym|
     next if container_sym == :sites
-    map.resources(container_sym) do |container|
-      container.resources(*container_sym.to_class.contents)
-      container.resources :sources, :member => { :import => :get }
-      container.resources :tags
+    resources container_sym do
+      resources(*container_sym.to_class.contents)
+      resources :sources do
+        get :import, :as => :member
+      end
+      resources :tags
     end
   end
-  map.resources :sources, :member => { :import => :get }
-
-  map.resources :logos
-
-  map.resources(*(ActiveRecord::Logoable.symbols - Array(:sites))) do |logoable|
-    logoable.resource :logo
+  resources :sources do
+    get :import, :as => :member
   end
 
-  map.resources :roles
-  map.resources :invitations, :member => { :accept => :get }
+  resources :logos
 
-  map.resources(*ActiveRecord::Stage.symbols - Array(:sites)) do |stage|
-    stage.resources :performances
-    stage.resources :invitations
-    stage.resources :join_requests
+  resources(*(ActiveRecord::Logoable.symbols - Array(:sites))) do
+    resource :logo
   end
 
-  map.resources :performances
+  resources :roles
+  resources :invitations do
+    get :accept, :as => :member
+  end
+
+  resources(*ActiveRecord::Stage.symbols - Array(:sites)) do
+    resources :performances
+    resources :invitations
+    resources :join_requests
+  end
+
+  resources :performances
 end

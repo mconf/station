@@ -12,7 +12,7 @@ module ActiveRecord #:nodoc:
   # == The Authorization Chain
   # Access Control policies are defining by the Authorization Chain.
   #
-  # Each ActiveRecord model have an Authorization Chain (AC) associated. The AC is a sequence of 
+  # Each ActiveRecord model have an Authorization Chain (AC) associated. The AC is a sequence of
   # Authorization Blocks (AB). Each AB should enclose only one security policy.
   #
   # When asking some model if some Agent is allowed to perform an action, the Authorization Chain is
@@ -127,7 +127,7 @@ module ActiveRecord #:nodoc:
       #
       # Is the response is cached, it is responded immediately.
       #
-      # Else, the Authorization Chain is evaluated. 
+      # Else, the Authorization Chain is evaluated.
       # See ActiveRecord::Authorization for information on how it works
       #
       # If the agent is not a SingularAgent, the Authorization Chain is also
@@ -152,7 +152,7 @@ module ActiveRecord #:nodoc:
       #FIXME: DRY:
       def authorizes?(permission, options = {}) #:nodoc:
         logger.debug "Station: DEPRECATION WARNING \"authorizes?\". Please use \"authorize?\" instead."
-        line = caller.select{ |l| l =~ /^#{ RAILS_ROOT }/ }.first
+        line = caller.select{ |l| l =~ /^#{ Rails.root.to_s }/ }.first
         logger.debug "           in: #{ line }"
 
         authorize?(permission, options)
@@ -227,7 +227,7 @@ module ActiveRecord #:nodoc:
       # Evaluate Authorization Chain
       def authorization_chain_eval(agent, permission) #:nodoc:
         self.class.authorization_chain.each do |block|
-          auth_block_eval = 
+          auth_block_eval =
             case block
             when Symbol
               send(block, agent, permission)

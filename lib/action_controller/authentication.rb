@@ -1,5 +1,5 @@
 module ActionController #:nodoc:
-  # Authentication module provides with Controller and Helper methods 
+  # Authentication module provides with Controller and Helper methods
   # for Agent identification support
   #
   # For permissions issues in your Controllers, see ActionController::Authorization
@@ -11,7 +11,7 @@ module ActionController #:nodoc:
   # == Current Agent
   # There are some methods available to access the Agent
   # that is requesting some action
-  #  
+  #
   # authenticated?:: Is there any Agent authenticated in this request?
   # current_agent::  Agent currently authenticated. Defaults to <tt>Anonymous.current</tt>
   # current_agent=::  Set current_agent
@@ -24,8 +24,8 @@ module ActionController #:nodoc:
   #   current_user # => The authenticated user, or Anonymous.current
   #
   # == Filters
-  # authentication_required:: The action requires to be performed by an 
-  #                           authenticated Agent. Calls not_authenticated 
+  # authentication_required:: The action requires to be performed by an
+  #                           authenticated Agent. Calls not_authenticated
   #                           if there is none
   #
   # == State Information
@@ -48,7 +48,8 @@ module ActionController #:nodoc:
       end
 
       # Add "current_#{ agent_type}" methods..
-      current_polymorphic_agent_proc = lambda do
+      # TODO test if can use proc instead of lambda
+      current_polymorphic_agent_proc = proc do
         alias_method_chain :method_missing, :current_polymorphic_agent
       end
 
@@ -57,7 +58,8 @@ module ActionController #:nodoc:
 
       # ..in the Helper
       base.helper_method :method_missing_with_current_polymorphic_agent
-      base.master_helper_module.module_eval &current_polymorphic_agent_proc
+      # TODO was master_helper_module doesn't exists in rails 3
+      #base.master_helper_module.module_eval &current_polymorphic_agent_proc
     end
 
     protected
@@ -82,8 +84,8 @@ module ActionController #:nodoc:
         method_missing_without_current_polymorphic_agent(method, *args, &block)
       end
 
-      # Accesses the current Agent from the session.  
-      # Set it to Anonymous.current if authentication fails so 
+      # Accesses the current Agent from the session.
+      # Set it to Anonymous.current if authentication fails so
       # that future calls do not hit the database.
       def current_agent
         @current_agent ||= (login_from_session || login_from_basic_auth || login_from_cookie_token || Anonymous.current)
@@ -101,14 +103,14 @@ module ActionController #:nodoc:
           session[:agent_id]   = new_agent.id
           session[:agent_type] = new_agent.class.to_s
 
-          if params[:remember_me] == "1" && 
+          if params[:remember_me] == "1" &&
             new_agent.class.agent_options[:authentication].include?(:cookie_token)
 
             new_agent.remember_me
 
-            cookies[:auth_token] = { 
-              :value => new_agent.remember_token , 
-              :expires => new_agent.remember_token_expires_at 
+            cookies[:auth_token] = {
+              :value => new_agent.remember_token ,
+              :expires => new_agent.remember_token_expires_at
             }
           end
         end
@@ -144,7 +146,7 @@ module ActionController #:nodoc:
       # to access the requested action.  For example, a popup window might
       # simply close itself.
       def not_authenticated
-        case request.format 
+        case request.format
         when Mime::HTML
           store_location
           redirect_to(current_site.ssl? ?
@@ -198,7 +200,7 @@ module ActionController #:nodoc:
           agent = agent_class.find_by_remember_token(cookies[:auth_token])
           if agent && agent.remember_token?
             agent.remember_me
-            cookies[:auth_token] = { :value =>   agent.remember_token, 
+            cookies[:auth_token] = { :value =>   agent.remember_token,
                                      :expires => agent.remember_token_expires_at }
             return self.current_agent = agent
           end

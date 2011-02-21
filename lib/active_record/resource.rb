@@ -2,7 +2,7 @@ module ActiveRecord #:nodoc:
   # == acts_as_resource
   # Station goes one step further the Rails scaffold.
   #
-  # A Resource is a model that supports, at least, CRUD operations. 
+  # A Resource is a model that supports, at least, CRUD operations.
   # As consecuence, it can be imported/exported in several Content Types, which include:
   #
   # XML:: text document encoded using Extensible Markup Language (XML). These include XHTML, Atom and RSS.
@@ -18,7 +18,7 @@ module ActiveRecord #:nodoc:
         mime_type = content_type.is_a?(Mime::Type) ?
           content_type :
           Mime::Type.lookup(content_type)
-        
+
         classes.each do |klass|
           return klass if klass.mime_types.include?(mime_type)
         end
@@ -26,8 +26,8 @@ module ActiveRecord #:nodoc:
       end
 
       def included(base) # :nodoc:
-        # Fake named_scope to ActiveRecord instances that haven't children
-        base.named_scope :roots, lambda  { {} } unless base.respond_to?(:roots)
+        # Fake scope to ActiveRecord instances that haven't children
+        base.scope :roots, lambda  { {} } unless base.respond_to?(:roots)
         base.extend ActsAsMethods
       end
     end
@@ -51,7 +51,7 @@ module ActiveRecord #:nodoc:
         options[:per_page]    ||= 9
         options[:delegate_content_types] ||= false
 
-        named_scope :roots, lambda {
+        scope :roots, lambda {
           column_names.include?('parent_id') ?
           { :conditions => { :parent_id => nil } } :
           {}
@@ -127,7 +127,7 @@ module ActiveRecord #:nodoc:
     end
 
     module InstanceMethods
-      # Returns the mime type for this Content instance. 
+      # Returns the mime type for this Content instance.
       # Example: Mime::XML
       def mime_type
         return nil unless respond_to?(:content_type)
@@ -143,10 +143,10 @@ module ActiveRecord #:nodoc:
       def format
         mime_type ? mime_type.to_sym : nil
       end
-      
+
       # Method useful for icon files
       #
-      # If the Content has a Mime Type, return it scaped with '-' 
+      # If the Content has a Mime Type, return it scaped with '-'
       #   application/jpg => application-jpg
       # else, return the underscored class name:
       #   photo

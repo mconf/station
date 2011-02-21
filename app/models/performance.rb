@@ -5,7 +5,7 @@
 # stage_type(type): find Peformances by Stage type
 #
 # == Only one with highest Role
-# When there is only one Performance in some stage with the highest Role, the callbacks :avoid_downgrading_only_one_with_highest_role and :avoid_destroying_only_one_with_highest_role prevents the Stage runs out of Agents performing the highest Role. 
+# When there is only one Performance in some stage with the highest Role, the callbacks :avoid_downgrading_only_one_with_highest_role and :avoid_destroying_only_one_with_highest_role prevents the Stage runs out of Agents performing the highest Role.
 #
 # E.g., in a Space, the only Administrator can't change his Role to a lower one and can't leave the Space without assigning a new Administrator
 
@@ -22,7 +22,7 @@ class Performance < ActiveRecord::Base
                                    :sortable => true }
                                ]
 
-  named_scope :stage_type, lambda { |type|
+  scope :stage_type, lambda { |type|
     type ?
       { :conditions => [ "stage_type = ?", type.to_s.classify ] } :
       {}
@@ -33,7 +33,7 @@ class Performance < ActiveRecord::Base
   validates_uniqueness_of :agent_type, :scope => [ :agent_id, :stage_id, :stage_type ]
 
   # Avoid a Stage running from Performances with the most important Role
-  validate_on_update :avoid_downgrading_only_one_with_highest_role
+  validate :avoid_downgrading_only_one_with_highest_role, :on => :update
 
   validate :role_belongs_to_same_stage
 
@@ -64,13 +64,13 @@ class Performance < ActiveRecord::Base
       return false
     end
   end
-  
+
   def role_belongs_to_same_stage
-    
+
     if role.stage_type != stage_type
       errors.add(:role_id, I18n.t('performance.errors.the_role_should_not_belong_to_a_different_stage_type'))
     end
-    
+
   end
-  
+
 end

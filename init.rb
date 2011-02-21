@@ -1,9 +1,13 @@
-config.gem "mislav-will_paginate", :lib => 'will_paginate', 
-                                   :version => '>= 2.3.2',
-                                   :source => 'http://gems.github.com/'
+#config.gem "mislav-will_paginate", :lib => 'will_paginate',
+#                                   :version => '>= 2.3.2',
+#                                   :source => 'http://gems.github.com/'
+
+# TODO this may affect several places bellow
+directory = File.expand_path(File.dirname(__FILE__))
 
 # Make Station app/ paths reloadable
-ActiveSupport::Dependencies.load_once_paths.delete_if { |p| p =~ /^#{ directory }\/app/ }
+# TODO: test it
+ActiveSupport::Dependencies.autoload_once_paths.delete(File.expand_path(File.dirname(__FILE__))+'/app')
 
 # Core Extensions
 require_dependency 'station/core_ext'
@@ -55,13 +59,13 @@ ActiveSupport::Inflector.inflections do |inflect|
 end
 
 # i18n
-locale_files = 
+locale_files =
   Dir[ File.join(File.join(directory, 'config', 'locales'), '*.{rb,yml}') ]
 
 if locale_files.present?
-  first_app_element = 
-    I18n.load_path.select{ |e| e =~ /^#{ RAILS_ROOT }/ }.reject{ |e|
-      e =~ /^#{ RAILS_ROOT }\/vendor\/plugins/ }.first
+  first_app_element =
+    I18n.load_path.select{ |e| e =~ /^#{ Rails.root.to_s }/ }.reject{ |e|
+      e =~ /^#{ Rails.root.to_s }\/vendor\/plugins/ }.first
 
   app_index = I18n.load_path.index(first_app_element) || - 1
 
@@ -69,7 +73,7 @@ if locale_files.present?
 end
 
 # Models Preload
-file_patterns = [ File.dirname(__FILE__), RAILS_ROOT ].map{ |f| f + '/app/models/**/*.rb' }
+file_patterns = [ File.dirname(__FILE__), Rails.root.to_s ].map{ |f| f + '/app/models/**/*.rb' }
 file_exclusions = ['svn', 'CVS', 'bzr']
 file_patterns.reject{ |f| f =~ /#{file_exclusions.join("|")}/ }
 
@@ -86,17 +90,17 @@ file_patterns.each do |file_pattern|
   end
 end
 
-# # If there are overwritten engine files in the application, load them 
+# # If there are overwritten engine files in the application, load them
 # # instead of the engine ones.
 #
 # If you only want to add functionality, you should use:
-#   require_dependency "#{ RAILS_ROOT }/path/to/the/engine/file"
+#   require_dependency "#{ Rails.root.to_s }/path/to/the/engine/file"
 # on the top of the application file and then reopen the class
 #
 preloaded_files.select{ |f| f =~ /^#{ directory }/ }.each do |f|
-  app_f = f.gsub(directory, RAILS_ROOT)
+  app_f = f.gsub(directory, Rails.root.to_s)
   if File.exists?(app_f)
-    preloaded_files |= [ app_f ] 
+    preloaded_files |= [ app_f ]
     preloaded_files.delete(f)
   end
 end

@@ -2,8 +2,8 @@ module ActiveRecord #:nodoc:
   # Container(s) are models receiving Content(s) posted by Agent(s)
   module Sortable
     def self.included(base) #:nodoc:
-      # Fake named_scope for ActiveRecord that aren't Sortables
-      base.named_scope :column_sort, lambda { |order, direction| {} }
+      # Fake scope for ActiveRecord that aren't Sortables
+      base.scope :column_sort, lambda { |order, direction| {} }
       base.extend ClassMethods
     end
 
@@ -20,8 +20,8 @@ module ActiveRecord #:nodoc:
       # Options:
       # default_order:: Sort by this order by default.
       # default_direction:: Sort by this direction default
-      # columns:: Array of columns that will be displayed. 
-      # Columns can be defined in two ways: 
+      # columns:: Array of columns that will be displayed.
+      # Columns can be defined in two ways:
       # Hash:: Describe each column attributes. These are:
       # * name: Title of the column
       # * content: The content that will be displayed for each object of the list. See ActiveRecord::Sortable::Column#data
@@ -31,14 +31,14 @@ module ActiveRecord #:nodoc:
       def acts_as_sortable(options = {})
         ActiveRecord::Sortable.register_class(self)
 
-        options[:columns] ||= self.table_exists? ? 
+        options[:columns] ||= self.table_exists? ?
           self.columns.map{ |c| c.name.to_sym } :
           Array.new
 
         cattr_reader :sortable_options
         class_variable_set "@@sortable_options", options
 
-        named_scope :column_sort, lambda { |order, direction|
+        scope :column_sort, lambda { |order, direction|
           { :order => sanitize_order_and_direction(order, direction) }
         }
       end
@@ -51,11 +51,11 @@ module ActiveRecord #:nodoc:
       # Sanitize user send params
       def sanitize_order_and_direction(order, direction)
         default_order = sortable_options[:default_order] ||
-          column_names.include?("updated_at") && "#{ table_name }.updated_at" || 
+          column_names.include?("updated_at") && "#{ table_name }.updated_at" ||
           [ table_name, columns.first.name ].join('.')
 
         default_direction = sortable_options[:default_direction] ||
-          column_names.include?("updated_at") && "ASC" || 
+          column_names.include?("updated_at") && "ASC" ||
           "DESC"
 
         # Remove all but letters and dots
@@ -99,7 +99,7 @@ module ActiveRecord #:nodoc:
         end
       end
 
-      # Get data for this object based in <tt>:content</tt> parameter. 
+      # Get data for this object based in <tt>:content</tt> parameter.
       # There are two types of <tt>:content</tt> parameter:
       # Symbol:: represents a method of the object, like <tt>object.name</tt>
       # Proc:: more complicate data. Example:
@@ -118,7 +118,7 @@ module ActiveRecord #:nodoc:
           if o.is_a?(::ActiveRecord::Base)
             begin
               helper.link_to(helper.sanitize(o.name), helper.polymorphic_path(o))
-            rescue 
+            rescue
               helper.sanitize(o.name)
             end
           else
