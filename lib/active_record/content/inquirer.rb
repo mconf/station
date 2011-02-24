@@ -9,14 +9,18 @@ module ActiveRecord #:nodoc:
 
       class << self
         def all(options = {}, container_options = {})
-          all_query = "SELECT * FROM (#{ query(options.dup, container_options) }) AS all_contents  "
+          # TODO Migrated to rails3
+          all_query = options
+          all_query[:select] = "*"
+          # TODO "setting 'AS' here is probably not the best solution"
+          all_query[:from] = "(#{ query(options.dup, container_options) }) AS all_contents"
+          #all_query = "SELECT * FROM (#{ query(options.dup, container_options) }) AS all_contents  "
 
-          add_conditions!(all_query, options[:conditions], nil)
-          add_group!(all_query, options[:group], options[:having], nil)
-          add_order!(all_query, options[:order], nil)
-          add_limit!(all_query, options, nil)
-
-          find_by_sql all_query
+          #add_conditions!(all_query, options[:conditions], nil)
+          #add_group!(all_query, options[:group], options[:having], nil)
+          #add_order!(all_query, options[:order], nil)
+          #add_limit!(all_query, options, nil)
+          find_by_sql construct_finder_arel(options).to_sql
         end
 
         def paginate(options = {}, container_options = {})

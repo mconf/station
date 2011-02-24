@@ -134,7 +134,8 @@ module ActiveRecord #:nodoc:
       # Options:
       # container:: The container passed to in(container) scope
       def content_inquirer_scope(options = {})
-        inquirer_scope = roots.in(options[:container]).scope(:find)
+        #inquirer_scope = roots.in(options[:container]).scope(:find)
+        inquirer_scope = roots.in(options[:container])
       end
 
       # Construct SQL query used by ActiveRecord::Content::Inquirer
@@ -144,15 +145,18 @@ module ActiveRecord #:nodoc:
       # scope_options will be passed to content_inquirer_scope
       #
       def content_inquirer_query(params = {}, scope_options = {})
+
         inquirer_scope = content_inquirer_scope(scope_options)
 
         # Clean scope parameters like :order
-        inquirer_scope.delete(:order)
-
-        with_exclusive_scope(:find => inquirer_scope) do
-          construct_finder_sql(params)
+        params.each do |key,value|
+          params.delete(key) unless ActiveRecord::SpawnMethods::VALID_FIND_OPTIONS.include?(key)
         end
+        params.delete(:order)
+
+        construct_finder_arel(params, inquirer_scope).to_sql
       end
+
     end
 
     module InstanceMethods
