@@ -1,7 +1,7 @@
 <h1>New source</h1>
 
 <% setup_sources(@source).each do |source| %>
-  <% form_for [ container, source ] do |f| %>
+  <%= form_for [ container, source ] do |f| %>
     <%= f.error_messages %>
 
     <%= render :partial => 'form', :object => f %>

@@ -242,6 +242,6 @@ class StationAgentGenerator < Rails::Generator::NamedBase
       opt.on("--allow-collissions", 
              "Don't check for class collissions") { |v| options[:allow_collissions] = true }
       opt.on("--rspec",
-             "Force rspec mode (checks for RAILS_ROOT/spec by default)") { |v| options[:rspec] = true }
+             "Force rspec mode (checks for Rails.root/spec by default)") { |v| options[:rspec] = true }
     end
 end

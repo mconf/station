@@ -85,7 +85,7 @@ module ActionController #:nodoc:
         end
 
         format.html do
-          render(:file => "#{RAILS_ROOT}/public/403.html", 
+          render(:file => "#{Rails.root.to_s}/public/403.html", 
                  :status => 403)
         end
       end

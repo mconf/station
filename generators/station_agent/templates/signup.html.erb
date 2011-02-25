@@ -2,7 +2,7 @@
 
 <%%= error_messages_for :agent %>
 
-<%% form_for :agent, :url => <%= table_name %>_path do |f| -%>
+<%%= form_for :agent, :url => <%= table_name %>_path do |f| -%>
 <p><label for="login"><%%= t(:"agent.authentication.login") %></label><br/>
 <%%= f.text_field :login %></p>
 
