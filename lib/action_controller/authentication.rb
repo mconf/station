@@ -58,8 +58,7 @@ module ActionController #:nodoc:
 
       # ..in the Helper
       base.helper_method :method_missing_with_current_polymorphic_agent
-      # TODO was master_helper_module doesn't exists in rails 3
-      #base.master_helper_module.module_eval &current_polymorphic_agent_proc
+      base._helpers.module_eval &current_polymorphic_agent_proc
     end
 
     protected

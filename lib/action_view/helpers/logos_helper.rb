@@ -31,7 +31,7 @@ module ActionView #:nodoc:
             polymorphic_url *args
           end
         when String
-          returning image_path(args) do |path|
+          image_path(args).tap do |path|
             path.replace(request.protocol + request.host_with_port + path) if routing_type == :url
           end
         else
@@ -51,9 +51,9 @@ module ActionView #:nodoc:
         title = options.delete(:title) || (resource.respond_to?(:title) ? sanitize(resource.title) : resource.class.to_s)
         id = options.delete(:id)
         
-        returning "" do |html|
+        "".tap do |html|
     #      html << "<div class=\"logo logo-#{ options[:size] }\">"
-
+ 
           image = image_tag(logo_image_path(resource, options),
                             :alt => alt,
                             :title => title,
@@ -89,7 +89,7 @@ module ActionView #:nodoc:
           text = link_to(text, options[:url])
         end
 
-        returning "" do |html|
+        "".tap do |html|
           html << "<span id=\"#{ dom_id(resource) }-logotype\" class=\"logotype\">"
           html << logo(resource, options)
           html << options[:spacer]
