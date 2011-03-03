@@ -12,15 +12,10 @@ module ActiveRecord #:nodoc:
           # TODO Migrated to rails3
           all_query = options
           all_query[:select] = "*"
-          # TODO "setting 'AS' here is probably not the best solution"
           all_query[:from] = "(#{ query(options.dup, container_options) }) AS all_contents"
           #all_query = "SELECT * FROM (#{ query(options.dup, container_options) }) AS all_contents  "
 
-          #add_conditions!(all_query, options[:conditions], nil)
-          #add_group!(all_query, options[:group], options[:having], nil)
-          #add_order!(all_query, options[:order], nil)
-          #add_limit!(all_query, options, nil)
-          find_by_sql construct_finder_arel(options).to_sql
+          find_by_sql construct_finder_arel(all_query).to_sql
         end
 
         def paginate(options = {}, container_options = {})
@@ -42,11 +37,13 @@ module ActiveRecord #:nodoc:
         end
 
         def count(options = {}, container_options = {})
-          count_query = "SELECT COUNT(*) FROM (#{ query(options, container_options) }) AS all_contents "
-          add_conditions!(count_query, options[:conditions], nil)
-          add_group!(count_query, options[:group], options[:having], nil)
+          # TODO Migrated to rails3
+          count_query = options
+          count_query[:select] = "COUNT(*)"
+          count_query[:from] = "(#{ query(options, container_options) }) AS all_contents"
+          #count_query = "SELECT COUNT(*) FROM (#{ query(options, container_options) }) AS all_contents "
 
-          count_by_sql count_query
+          count_by_sql construct_finder_arel(count_query).to_sql
         end
 
         # Global Inquirer query
