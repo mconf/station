@@ -20,14 +20,14 @@ module ActiveRecord #:nodoc:
         def remember_me_until(time) #:nodoc:
           self.remember_token_expires_at = time
           self.remember_token            = encrypt("#{email}--#{remember_token_expires_at}")
-          save(false)
+          save(:validate => false)
         end
 
         # Remove Remember information
         def forget_me
           self.remember_token_expires_at = nil
           self.remember_token            = nil
-          save(false)
+          save(:validate => false)
         end
       end
     end
