@@ -77,7 +77,7 @@ module ActionView #:nodoc:
         
         title = options[:title] || self.title
 
-        content_for :headers, "<link href=\"#{ url }.atom\" rel=\"alternate\" title=\"#{ title }\" type=\"application/atom+xml\" />"
+        content_for :headers, "<link href=\"#{ url }.atom\" rel=\"alternate\" title=\"#{ title }\" type=\"application/atom+xml\" />".html_safe
       end
     end
   end
