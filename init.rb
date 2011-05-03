@@ -2,6 +2,8 @@
 #                                   :version => '>= 2.3.2',
 #                                   :source => 'http://gems.github.com/'
 
+require_dependency 'permalink_fu'
+
 # TODO this may affect several places bellow
 directory = File.expand_path(File.dirname(__FILE__))
 
