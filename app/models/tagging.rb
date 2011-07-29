@@ -9,6 +9,6 @@ class Tagging < ActiveRecord::Base
   # This callback makes sure that an orphaned <tt>Tag</tt> is deleted if it no longer tags anything.
   after_destroy :after_destroy_method
   def after_destroy_method
-    tag.destroy_without_callbacks if tag and tag.taggings.count == 0
+    tag.delete if tag and tag.taggings.count == 0
   end
 end
