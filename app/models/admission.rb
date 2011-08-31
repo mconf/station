@@ -14,13 +14,16 @@ class Admission < ActiveRecord::Base
   before_validation :extract_email, :sync_candidate_email
 
   validates_uniqueness_of :candidate_id,
-                          :scope => [ :candidate_type, :group_id, :group_type ],
+                          :scope => [ :candidate_type, :group_id, :group_type, :processed_at ],
                           :allow_nil => true
+                          
   validates_uniqueness_of :candidate_type,
-                          :scope => [ :candidate_id,   :group_id, :group_type ],
+                          :scope => [ :candidate_id, :group_id, :group_type, :processed_at ],
                           :allow_nil => true
+                          
   validates_uniqueness_of :email,
-                          :scope => [ :group_id, :group_type ]
+                          :scope => [ :group_id, :group_type, :processed_at ]
+
   validates_format_of :email, :with => /^[\w\d._%+-]+@[\w\d.-]+\.[\w]{2,}$/
 
   validate :candidate_without_role, :on => :create
