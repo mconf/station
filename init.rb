@@ -1,14 +1,9 @@
-#config.gem "mislav-will_paginate", :lib => 'will_paginate',
-#                                   :version => '>= 2.3.2',
-#                                   :source => 'http://gems.github.com/'
-
+require 'will_paginate/array'
 require_dependency 'permalink_fu'
 
-# TODO this may affect several places bellow
 directory = File.expand_path(File.dirname(__FILE__))
 
 # Make Station app/ paths reloadable
-# TODO: test it
 ActiveSupport::Dependencies.autoload_once_paths.delete(File.expand_path(File.dirname(__FILE__))+'/app')
 
 # Core Extensions
@@ -32,7 +27,7 @@ end
 
 # Mime Types
 # Redefine Mime::ATOM to include "application/atom+xml;type=entry"
-Mime::Type.register "application/atom+xml", :atom, [ "application/atom+xml;type=entry" ]
+# Mime::Type.register "application/atom+xml", :atom, [ "application/atom+xml;type=entry" ]
 Mime::Type.register "application/atomsvc+xml", :atomsvc
 Mime::Type.register "application/atomcat+xml", :atomcat
 Mime::Type.register "application/xrds+xml",    :xrds

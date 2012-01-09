@@ -78,7 +78,8 @@ module ActiveRecord #:nodoc:
         if options[:reflection] != :container
           alias_attribute :container, options[:reflection]
           attr_protected options[:reflection]
-          attr_protected reflections[options[:reflection]].primary_key_name
+          attr_protected reflections[options[:reflection]].respond_to?(:foreign_key) ?
+            reflections[options[:reflection]].foreign_key : reflections[options[:reflection]].primary_key_name
           if reflections[options[:reflection]].options[:polymorphic]
             attr_protected reflections[options[:reflection]].options[:foreign_type]
           end
@@ -116,7 +117,9 @@ module ActiveRecord #:nodoc:
           "(#{ c })"
         else
           if container.class.acts_as?(:container)
-            c = "#{ table_name }.#{ container_reflection.primary_key_name } = '#{ container.id }'"
+            primary_key = container_reflection.respond_to?(:foreign_key) ?
+              container_reflection.foreign_key : container_reflection.primary_key_name
+            c = "#{ table_name }.#{ primary_key } = '#{ container.id }'"
             if container_reflection.options[:polymorphic]
               c << " AND #{ table_name }.#{ container_reflection.options[:foreign_type] } = '#{ container.class.base_class }'"
             end

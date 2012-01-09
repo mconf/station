@@ -2,8 +2,23 @@ module ActiveRecord #:nodoc:
   module Content
     # Fake ActiveRecord::Base subclass for building queries in Containers
     class Inquirer < ActiveRecord::Base
-      @colums = Array.new
-      @columns_hash = { "type" => :fake }
+      def self.columns
+        @columns ||= [];
+      end
+
+      def self.columns_hash
+        @columns_hash = { "type" => :fake }
+      end
+
+      def self.column(name, sql_type=nil, default=nil, null=true)
+        columns << ActiveRecord::ConnectionAdapters::Column.new(name.to_s, default,
+                                                                sql_type.to_s, null)
+      end
+
+      # Override the save method to prevent exceptions.
+      def save(validate = true)
+        validate ? valid? : true
+      end
 
       set_table_name "all_contents"
 
@@ -25,7 +40,7 @@ module ActiveRecord #:nodoc:
 
           all_options = options.dup
           all_options[:limit]  = limit
-          all_options[:offset] = offset 
+          all_options[:offset] = offset
 
           WillPaginate::Collection.create(page, limit) do |pager|
             contents = all(all_options, container_options.dup)
@@ -87,10 +102,10 @@ module ActiveRecord #:nodoc:
 
             return "SELECT * FROM ( SELECT #{ columns_sql }) AS empty WHERE `#{ columns.first }` IS NOT NULL"
           end
-           
+
           #Temporal fix for contents with type column
           container_options[:columns].delete('type')
-          
+
           containers.any? ?
             containers.map{ |c| container_query(c, container_options.dup) }.join(" UNION ") :
             container_query(nil, container_options)
@@ -103,7 +118,7 @@ module ActiveRecord #:nodoc:
         # contents:: The contents that will be included in the query. If container is present, defaults to container's contents. If it's nil, to all the Contents
         def container_query(container, options = {})
           options[:contents] ||=
-            ( container.present? ?  
+            ( container.present? ?
                 container.class.contents :
                 ActiveRecord::Content.symbols )
 
@@ -119,7 +134,7 @@ module ActiveRecord #:nodoc:
               }.join(", ")
             # Should fix this to support AR STI
             params[:select] += ", ( SELECT \"#{ content }\" ) AS type"
-           
+
             content.content_inquirer_query(params, :container => container)
           }.join(" UNION ")
         end

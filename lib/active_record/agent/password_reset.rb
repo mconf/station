@@ -2,12 +2,12 @@ module ActiveRecord #:nodoc:
   module Agent
     # Reset password support
     module PasswordReset
-      # Activate agent recovery password mechanism. 
+      # Activate agent recovery password mechanism.
       # Generates password reset code
       def lost_password
         @lost_password = true
         self.make_reset_password_code
-        save(false)
+        save(:validate => false)
       end
 
       # User did reset the password
@@ -18,7 +18,7 @@ module ActiveRecord #:nodoc:
         # Active agent if pending, since she has verified her email
         ! active? ?
           activate :
-          save(false)
+          save(:validate => false)
       end
 
       # Did the agent recently reset the passowrd?

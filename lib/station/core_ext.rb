@@ -121,19 +121,6 @@ unless ActionView::Helpers::AtomFeedHelper.respond_to?(:atom_entry)
   end
 end
 
-require 'will_paginate'
-
-module WillPaginate::ViewHelpers::Base #:nodoc:
-  def will_paginate_with_translation(collection = nil, options = {})
-    options[:previous_label] ||= I18n.t('pagination.previous_label')
-    options[:next_label] ||= I18n.t('pagination.next_label')
-
-    will_paginate_without_translation(collection, options)
-  end
-
-  alias_method_chain :will_paginate, :translation
-end
-
 # atom-tools like interface for standard Ruby RSS library
 begin
   require 'rss/1.0'
