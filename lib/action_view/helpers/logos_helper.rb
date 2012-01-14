@@ -47,22 +47,20 @@ module ActionView #:nodoc:
       def logo(resource, options = {})
         options[:size] ||= 16
         url = options.delete(:url)
-        alt = options.delete(:alt) || "[ #{ resource.respond_to?(:name) ? sanitize(resource.name) : resource.class } logo ]"
+        alt = options.delete(:alt) || "#{ resource.respond_to?(:name) ? sanitize(resource.name) : resource.class } logo"
         title = options.delete(:title) || (resource.respond_to?(:title) ? sanitize(resource.title) : resource.class.to_s)
         id = options.delete(:id)
-        
+
         "".tap do |html|
-    #      html << "<div class=\"logo logo-#{ options[:size] }\">"
- 
+          classes = 'logo '
+          classes += options[:class] if options.has_key?(:class)
           image = image_tag(logo_image_path(resource, options),
                             :alt => alt,
                             :title => title,
-                            :class => 'logo',
+                            :class => classes,
                             :id => id)
 
-          html << link_to_if(url, image, url, :class => 'logo')
-
-    #      html << '</div>'
+          html << link_to_if(url, image, url, :class => classes)
         end
       end
 
@@ -130,7 +128,7 @@ module ActionView #:nodoc:
         link_logotype(author, options)
       end
 
-      # Show a preview of content if it's not null and it isn't a new record. 
+      # Show a preview of content if it's not null and it isn't a new record.
       # Preview consists of link_logo to the content
       def preview(content, options = {})
         return "" unless content && ! content.new_record?
