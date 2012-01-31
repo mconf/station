@@ -1,15 +1,15 @@
 module ActionController #:nodoc:
   module Sessions
-    # Methods for Sessions based on LoginAndPassword Authentication 
+    # Methods for Sessions based on LoginAndPassword Authentication
     module LoginAndPassword
       # Init Session using LoginAndPassword Authentication
       def create_session_with_login_and_password(params = self.params)
-        return if params[:login].blank? || params[:password].blank?
+        return if params[:session][:login].blank? || params[:session][:password].blank?
 
         agent = nil
 
         ActiveRecord::Agent.authentication_classes(:login_and_password).each do |klass|
-          agent = klass.authenticate_with_login_and_password(params[:login], params[:password])
+          agent = klass.authenticate_with_login_and_password(params[:session][:login], params[:session][:password])
           break if agent
         end
 
