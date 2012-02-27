@@ -51,6 +51,14 @@ module ActionView #:nodoc:
         title = options.delete(:title) || (resource.respond_to?(:title) ? sanitize(resource.title) : resource.class.to_s)
         id = options.delete(:id)
 
+        # get the thumbnail and its widthXheight to pass to image_tag
+        if resource.respond_to?(:logo) && resource.logo
+          thumb = resource.logo.thumbnails.find_by_thumbnail(options[:size])
+          if thumb && thumb.respond_to?(:width) && thumb.respond_to?(:height)
+            full_size = "#{thumb.width}x#{thumb.height}"
+          end
+        end
+
         "".tap do |html|
           classes = 'logo '
           classes += options[:class] if options.has_key?(:class)
@@ -58,8 +66,8 @@ module ActionView #:nodoc:
                             :alt => alt,
                             :title => title,
                             :class => classes,
-                            :id => id)
-
+                            :id => id,
+                            :size => full_size)
           html << link_to_if(url, image, url, :class => classes)
         end
       end

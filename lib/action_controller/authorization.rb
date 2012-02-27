@@ -12,9 +12,9 @@ module ActionController #:nodoc:
   # auth_object:: a Symbol representing a controller's instance variable name or method. This variable or method gives the authorization object, an instance that will be queried for checking authorization. This is actually achived calling <tt>auth_object.authorize?(permission, :to => current_agent)</tt>. See ActiveRecord::Authorization to define authorization security policies.
   # fiter_options:: Available options are:
   #  if:: A Proc proc{ |controller| ... } or Symbol to be executed as condition of the filter
-  #   
+  #
   #  The rest of options are passed to before_filter. See Rails before_filter documentation
-  #   
+  #
   #
   # === Examples
   #
@@ -73,7 +73,7 @@ module ActionController #:nodoc:
       default_authorization_instance.authorize?(permission, :to => current_agent)
     end
 
-    # If user is not authenticated, return not_authenticated to allow identification. 
+    # If user is not authenticated, return not_authenticated to allow identification.
     # Else, set HTTP Forbidden (403) response.
     def not_authorized
       return not_authenticated unless authenticated?
@@ -85,8 +85,8 @@ module ActionController #:nodoc:
         end
 
         format.html do
-          render(:file => "#{Rails.root.to_s}/public/403.html", 
-                 :status => 403)
+          render(:file => "#{Rails.root.to_s}/public/403",
+                 :formats => [:html], :status => 403)
         end
       end
     end
