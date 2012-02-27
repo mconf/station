@@ -20,7 +20,7 @@ module ActiveRecord #:nodoc:
         validate ? valid? : true
       end
 
-      set_table_name "all_contents"
+      self.table_name = "all_contents"
 
       class << self
         def all(options = {}, container_options = {})
