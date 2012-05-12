@@ -1,5 +1,4 @@
 require 'will_paginate/array'
-require_dependency 'permalink_fu'
 
 directory = File.expand_path(File.dirname(__FILE__))
 
