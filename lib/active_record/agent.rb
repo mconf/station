@@ -23,9 +23,9 @@ module ActiveRecord #:nodoc:
   # See Authentication module for methods supported.
   #
   # == Authorization
-  # Station uses an avanced access control model called the Authorization Chain. This provides you 
+  # Station uses an avanced access control model called the Authorization Chain. This provides you
   # flexibility to enforce miscelaneus authorization policies. See Authorization for more insight.
-  # 
+  #
   # === RBAC
   # Station provides Role-Based Access Control (RBAC) functionality within the Authorization framework.
   #
@@ -40,23 +40,27 @@ module ActiveRecord #:nodoc:
   # * CronAgent: the time-based job scheduler in Unix-like computer operating systems.
   #
   module Agent
+
+    module Authentication
+    end
+
     class << self
-      
-      # Returns the first model that acts as Agent, has activation enabled and 
+
+      # Returns the first model that acts as Agent, has activation enabled and
       # login and password
       def activation_class
-        classes.select{ |a| a.agent_options[:activation] && 
+        classes.select{ |a| a.agent_options[:activation] &&
           a.agent_options[:authentication].include?(:login_and_password) }.first
       end
 
       # An Array with Agent classes supporting authentication @method@
       def authentication_classes(method = nil)
         classes.select{ |klass|
-          klass.agent_options[:authentication] 
+          klass.agent_options[:authentication]
         }.select { |klass|
           method ?
             klass.agent_options[:authentication].include?(method) :
-            ! klass.agent_options[:authentication].blank? 
+            ! klass.agent_options[:authentication].blank?
         }
       end
 
@@ -99,33 +103,37 @@ module ActiveRecord #:nodoc:
         instance_variable_set "@agent_options", options
 
         # Load Authentication Methods
-        #
         options[:authentication].each do |method|
+          require "#{File.dirname(__FILE__)}/agent/authentication/#{method.to_s}"
           include "ActiveRecord::Agent::Authentication::#{ method.to_s.camelize }".constantize
         end
 
         if options[:openid_server]
+          require "#{File.dirname(__FILE__)}/agent/openid_server"
           include OpenidServer
         end
 
         if options[:authentication].include?(:login_and_password)
+          require "#{File.dirname(__FILE__)}/agent/password_reset"
           include PasswordReset
         end
 
         # Loads agent email verification
         if options[:activation]
+          require "#{File.dirname(__FILE__)}/agent/activation"
           include Activation
         end
 
         if options[:invite]
+          require "#{File.dirname(__FILE__)}/agent/invite"
           if table_exists? && ! column_names.include?(options[:invite].to_s)
-            raise "#{ self.to_s } class hasn't column #{ options[:invite] }" 
+            raise "#{ self.to_s } class hasn't column #{ options[:invite] }"
           end
           include Invite
         end
 
-        has_many :agent_performances, 
-                 :class_name => "Performance", 
+        has_many :agent_performances,
+                 :class_name => "Performance",
                  :dependent => :destroy,
                  :as => :agent
 
