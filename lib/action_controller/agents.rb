@@ -39,16 +39,12 @@ module ActionController #:nodoc:
     # Responds to Atom Service format, returning the Containers this Agent can post to
     def show
       respond_to do |format|
-        format.html {
-          if agent.class.agent_options[:openid_server]
-            headers['X-XRDS-Location'] = polymorphic_url(agent, :format => :xrds)
-          end
-        }
+        format.html
         format.atomsvc
         format.xrds
       end
     end
-  
+
     # Render a form for creating a new Agent
     def new
       @agent = model_class.new
@@ -64,7 +60,6 @@ module ActionController #:nodoc:
 
       unless authenticated?
         cookies.delete :auth_token
-        @agent.openid_identifier = session[:openid_identifier]
       end
 
       @agent.save!
@@ -93,9 +88,9 @@ module ActionController #:nodoc:
       flash[:success] = t(:deleted, :scope => agent.class.to_s.underscore)
       redirect_to polymorphic_path(model_class.new)
     end
-  
+
     protected
-  
+
     # Get Agent filter
     # Gets Agent instance by id or login
     #

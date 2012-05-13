@@ -178,7 +178,6 @@ module ActiveRecord #:nodoc:
         end
 
         if respond_to?(:author)
-          # TODO: find by OpenID or other attributes
           self.author = Anonymous.current
         end
 

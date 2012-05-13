@@ -1,9 +1,8 @@
-# Require Ruby URI Module, not defined by this file but with the 
+# Require Ruby URI Module, not defined by this file but with the
 # same source file name
 URI
 
-{ 'openid' => 'OpenID',
-  'atom/service' => 'AtomPub service document' }.each_pair do |gem, support|
+{ 'atom/service' => 'AtomPub service document' }.each_pair do |gem, support|
   begin
     require gem
   rescue MissingSourceFile
@@ -13,12 +12,8 @@ end
 
 # URI storage in the database
 class Uri < ActiveRecord::Base
-  has_many :openid_ownings, 
-           :class_name => "OpenIdOwning"
-  has_many :openid_trusts,
-           :class_name => "OpenIdTrust"
-             
-  # Return this URI string         
+
+  # Return this URI string
   def to_s
     self.uri
   end
@@ -40,37 +35,6 @@ class Uri < ActiveRecord::Base
     to_uri.open(headers)
   rescue
     nil
-  end
-
-  # Perform OpenID discover
-  #
-  # OpenID.discover returns [ claimed_id, openid_services ]
-  def openid_discover
-    @openid_discover ||= ::OpenID.discover self.uri
-  end
-
-  # Is this URI an OpenID
-  def openid?
-    openid_discover.last.any?
-  rescue
-    nil
-  end
-
-  # Update self.uri with OpenID claimed ID
-  def to_openid
-    self.uri = openid_discover.first
-  end
-
-  # Update self.uri with OpenID claimed ID and save the record
-  def to_openid!
-    update_attribute :uri, openid_discover.first
-  end
-
-  # Returns all the XRDS Service Endpoint Types 
-  def xrds_service_types
-    openid_discover.last.select{ |s| s.used_yadis }.map{ |s| s.type_uris }.flatten.uniq
-  rescue
-    Array.new
   end
 
   # Returns the AtomPub Service Document associated with this URI.
