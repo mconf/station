@@ -1,4 +1,0 @@
-<%= form_for edit_role_form, :remote => true do |f| %>
-  <%= f.select :role_id, @roles.map{ |role| [ role.name, role.id ] }, {} %>
-  <%= submit_tag t('performance.change')  %>
-<% end -%>
