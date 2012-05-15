@@ -71,10 +71,6 @@ module ActiveRecord #:nodoc:
         cattr_reader :per_page
         class_variable_set "@@per_page", options[:per_page]
 
-        if SourceImportation.table_exists?
-          has_one :source_importation, :as => :importation, :dependent => :destroy
-        end
-
         acts_as_sortable
 
         extend  ClassMethods

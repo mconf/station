@@ -36,9 +36,6 @@ Rails.application.routes.draw do
     next if container_sym == :sites
     resources container_sym do
       resources(*container_sym.to_class.contents)
-      resources :sources do
-        get :import, :as => :member
-      end
       resources :tags
     end
   end

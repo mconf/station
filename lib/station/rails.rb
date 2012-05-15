@@ -29,7 +29,7 @@ module Station
 
       # ActionView
       # Helpers
-      %w( logos sortable sources station tags ).each do |item|
+      %w( logos sortable station tags ).each do |item|
         require_dependency "action_view/helpers/#{ item }_helper"
         ActionView::Base.send :include, "ActionView::Helpers::#{ item.camelcase }Helper".constantize
       end

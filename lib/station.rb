@@ -23,7 +23,6 @@ module Station
   require 'action_view/helpers/form_tags_helper'
   require 'action_view/helpers/logos_helper'
   require 'action_view/helpers/sortable_helper'
-  require 'action_view/helpers/sources_helper'
   require 'action_view/helpers/station_helper'
   require 'action_view/helpers/tags_helper'
 
