@@ -1,7 +1,7 @@
 module Station
   class Engine < ::Rails::Engine
 
-    initializer 'station.all' do |app|
+    initializer 'station.all', :before => :load_config_initializers do |app|
 
       require 'will_paginate/array'
       directory = File.expand_path(File.dirname(__FILE__))
