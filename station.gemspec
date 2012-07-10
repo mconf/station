@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.email       = "mconf-dev@googlegroups.com"
   s.homepage    = "http://github.com/mconf/station"
   s.description = "Station"
-  s.authors     = []
+  s.authors     = ["Antonio Tapiador", "Mconf"]
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
