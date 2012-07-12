@@ -4,13 +4,28 @@ module Station
     initializer 'station.all', :before => :load_config_initializers do |app|
 
       require 'will_paginate/array'
-      directory = File.expand_path(File.dirname(__FILE__))
+      directory = File.expand_path(File.join(File.dirname(__FILE__), "..", ".."))
 
       # Make Station app/ paths reloadable
-      ActiveSupport::Dependencies.autoload_once_paths.delete(File.expand_path(File.dirname(__FILE__))+'/app')
+      ActiveSupport::Dependencies.autoload_once_paths.delete(File.expand_path(directory+'/app'))
 
       # Core Extensions
       require 'station/core_ext'
+
+      # ActiveRecord
+      require 'active_record/authorization'
+      ActiveRecord::Base.send :include, ActiveRecord::Authorization
+
+      require 'active_record/acts_as'
+      ActiveRecord::Base.extend ActiveRecord::ActsAs
+
+      # Initialize all Singular Agents
+      if SingularAgent.table_exists?
+        SingularAgent
+        Anonymous.current
+        Anyone.current
+        Authenticated.current
+      end
 
       # Mime Types
       # Redefine Mime::ATOM to include "application/atom+xml;type=entry"
@@ -61,22 +76,22 @@ module Station
       end
 
       # # Models Preload
-      # file_patterns = [ File.dirname(__FILE__), Rails.root.to_s ].map{ |f| f + '/app/models/**/*.rb' }
-      # file_exclusions = ['svn', 'CVS', 'bzr']
-      # file_patterns.reject{ |f| f =~ /#{file_exclusions.join("|")}/ }
+      file_patterns = [ directory, Rails.root.to_s ].map{ |f| f + '/app/models/**/*.rb' }
+      file_exclusions = ['svn', 'CVS', 'bzr']
+      file_patterns.reject{ |f| f =~ /#{file_exclusions.join("|")}/ }
 
-      # preloaded_files = []
+      preloaded_files = []
       # # # Lazy files need other files to be loaded first
-      # lazy_files = [ ]
+      lazy_files = [ ]
 
-      # # # Find all source files that need preloading
-      # file_patterns.each do |file_pattern|
-      #   Dir[file_pattern].each do |filename|
-      #     open filename do |file|
-      #       preloaded_files << filename if file.grep(/acts_as_(#{ ActiveRecord::ActsAs::Features.join('|') })/).any?
-      #     end
-      #   end
-      # end
+      # # Find all source files that need preloading
+      file_patterns.each do |file_pattern|
+        Dir[file_pattern].each do |filename|
+          open filename do |file|
+            preloaded_files << filename if file.grep(/acts_as_(#{ ActiveRecord::ActsAs::Features.join('|') })/).any?
+          end
+        end
+      end
 
       # # # If there are overwritten engine files in the application, load them
       # # # instead of the engine ones.
@@ -99,23 +114,17 @@ module Station
       #   preloaded_files << preloaded_files.delete(f)
       # end
 
-      # # # Finally, preload files
-      # preloaded_files.each do |f|
-      #   begin
-      #     require_dependency(f)
-      #   rescue Exception => e
-      #     #FIXME: logger ?
-      #     puts "Station autoload: Couldn't load file #{ f }: #{ e }"
-      #   end
-      # end
+      # # Finally, preload files
+      preloaded_files.each do |f|
+        begin
+          require_dependency(f)
+        rescue Exception => e
+          #FIXME: logger ?
+          puts "Station autoload: Couldn't load file #{ f }: #{ e }"
+        end
+      end
 
       ActiveSupport.on_load(:active_record) do
-        # ActiveRecord
-        require 'active_record/authorization'
-        ActiveRecord::Base.send :include, ActiveRecord::Authorization
-
-        require 'active_record/acts_as'
-        ActiveRecord::Base.extend ActiveRecord::ActsAs
 
         # Modifications of Station Engine
         # In Global authorization, users that are superusers are gods
