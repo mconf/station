@@ -21,7 +21,7 @@ module Station
 
       # Initialize all Singular Agents
       if SingularAgent.table_exists?
-        SingularAgent
+        #SingularAgent
         Anonymous.current
         Anyone.current
         Authenticated.current
@@ -76,22 +76,22 @@ module Station
       end
 
       # # Models Preload
-      file_patterns = [ directory, Rails.root.to_s ].map{ |f| f + '/app/models/**/*.rb' }
-      file_exclusions = ['svn', 'CVS', 'bzr']
-      file_patterns.reject{ |f| f =~ /#{file_exclusions.join("|")}/ }
+      # file_patterns = [ directory, Rails.root.to_s ].map{ |f| f + '/app/models/**/*.rb' }
+      # file_exclusions = ['svn', 'CVS', 'bzr']
+      # file_patterns.reject{ |f| f =~ /#{file_exclusions.join("|")}/ }
 
-      preloaded_files = []
-      # # # Lazy files need other files to be loaded first
-      lazy_files = [ ]
+      # preloaded_files = []
+      # # # # Lazy files need other files to be loaded first
+      # lazy_files = [ ]
 
-      # # Find all source files that need preloading
-      file_patterns.each do |file_pattern|
-        Dir[file_pattern].each do |filename|
-          open filename do |file|
-            preloaded_files << filename if file.grep(/acts_as_(#{ ActiveRecord::ActsAs::Features.join('|') })/).any?
-          end
-        end
-      end
+      # # # Find all source files that need preloading
+      # file_patterns.each do |file_pattern|
+      #   Dir[file_pattern].each do |filename|
+      #     open filename do |file|
+      #       preloaded_files << filename if file.grep(/acts_as_(#{ ActiveRecord::ActsAs::Features.join('|') })/).any?
+      #     end
+      #   end
+      # end
 
       # # # If there are overwritten engine files in the application, load them
       # # # instead of the engine ones.
@@ -115,14 +115,14 @@ module Station
       # end
 
       # # Finally, preload files
-      preloaded_files.each do |f|
-        begin
-          require_dependency(f)
-        rescue Exception => e
-          #FIXME: logger ?
-          puts "Station autoload: Couldn't load file #{ f }: #{ e }"
-        end
-      end
+      # preloaded_files.each do |f|
+      #   begin
+      #     require_dependency(f)
+      #   rescue Exception => e
+      #     #FIXME: logger ?
+      #     puts "Station autoload: Couldn't load file #{ f }: #{ e }"
+      #   end
+      # end
 
       ActiveSupport.on_load(:active_record) do
 
@@ -147,4 +147,3 @@ module Station
 
   end
 end
-

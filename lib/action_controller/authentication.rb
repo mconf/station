@@ -39,33 +39,33 @@ module ActionController #:nodoc:
     # Inclusion hook to make #current_agent and #authenticated? methods
     # available as ActionView helper methods.
     def self.included(base) # :nodoc:
-      base.send :helper_method, :current_agent, :authenticated?, :logged_in?
+      # base.send :helper_method, :current_agent, :authenticated?, :logged_in?
 
-      class << base
-        def authentication_filter(options = {})
-          before_filter :authentication_required, options
-        end
-      end
+      # class << base
+      #   def authentication_filter(options = {})
+      #     before_filter :authentication_required, options
+      #   end
+      # end
 
-      # Add "current_#{ agent_type}" methods..
-      # TODO test if can use proc instead of lambda
-      current_polymorphic_agent_proc = proc do
-        alias_method_chain :method_missing, :current_polymorphic_agent
-      end
+      # # Add "current_#{ agent_type}" methods..
+      # # TODO test if can use proc instead of lambda
+      # current_polymorphic_agent_proc = proc do
+      #   alias_method_chain :method_missing, :current_polymorphic_agent
+      # end
 
-      # ..in the Controller
-      base.class_eval &current_polymorphic_agent_proc
+      # # ..in the Controller
+      # base.class_eval &current_polymorphic_agent_proc
 
-      # ..in the Helper
-      base.helper_method :method_missing_with_current_polymorphic_agent
-      base._helpers.module_eval &current_polymorphic_agent_proc
+      # # ..in the Helper
+      # base.helper_method :method_missing_with_current_polymorphic_agent
+      # base._helpers.module_eval &current_polymorphic_agent_proc
     end
 
     protected
       # Returns true or false if an Agent is authenticated
       # Preloads @current_agent with the Agent's model if they're authenticated
       def authenticated?
-        current_agent != Anonymous.current
+        # current_agent != Anonymous.current
       end
 
       # Compativility with restful_authentication plugin
@@ -74,46 +74,46 @@ module ActionController #:nodoc:
       # Hook for Agent based current_#{ agent_class } methods
       # This allows using current_#{ agent_class } in controllers and helpers
       def method_missing_with_current_polymorphic_agent(method, *args, &block) #:nodoc:
-        if method.to_s =~ /^current_(.*)$/
-          agent = $1
-          if ActiveRecord::Agent.symbols.include?(agent.pluralize.to_sym)
-            return current_polymorphic_agent(agent.classify.constantize)
-          end
-        end
-        method_missing_without_current_polymorphic_agent(method, *args, &block)
+        # if method.to_s =~ /^current_(.*)$/
+        #   agent = $1
+        #   if ActiveRecord::Agent.symbols.include?(agent.pluralize.to_sym)
+        #     return current_polymorphic_agent(agent.classify.constantize)
+        #   end
+        # end
+        # method_missing_without_current_polymorphic_agent(method, *args, &block)
       end
 
       # Accesses the current Agent from the session.
       # Set it to Anonymous.current if authentication fails so
       # that future calls do not hit the database.
       def current_agent
-        @current_agent ||= (login_from_session || login_from_basic_auth || login_from_cookie_token || Anonymous.current)
+        # @current_agent ||= (login_from_session || login_from_basic_auth || login_from_cookie_token || Anonymous.current)
       end
 
       def current_polymorphic_agent(agent_klass) #:nodoc:
-        current_agent.is_a?(agent_klass) ? current_agent : Anonymous.current
+        # current_agent.is_a?(agent_klass) ? current_agent : Anonymous.current
       end
 
       # Store the given agent id and agent_type in the session.
       def current_agent=(new_agent)
-        if new_agent.nil?
-          session[:agent_id] = session[:agent_type] = nil
-        else
-          session[:agent_id]   = new_agent.id
-          session[:agent_type] = new_agent.class.to_s
+        # if new_agent.nil?
+        #   session[:agent_id] = session[:agent_type] = nil
+        # else
+        #   session[:agent_id]   = new_agent.id
+        #   session[:agent_type] = new_agent.class.to_s
 
-          if params[:remember_me] == "1" &&
-            new_agent.class.agent_options[:authentication].include?(:cookie_token)
+        #   if params[:remember_me] == "1" &&
+        #     new_agent.class.agent_options[:authentication].include?(:cookie_token)
 
-            new_agent.remember_me
+        #     new_agent.remember_me
 
-            cookies[:auth_token] = {
-              :value => new_agent.remember_token ,
-              :expires => new_agent.remember_token_expires_at
-            }
-          end
-        end
-        @current_agent = new_agent || Anonymous.current
+        #     cookies[:auth_token] = {
+        #       :value => new_agent.remember_token ,
+        #       :expires => new_agent.remember_token_expires_at
+        #     }
+        #   end
+        # end
+        # @current_agent = new_agent || Anonymous.current
       end
 
       # Filter method to enforce an authentication requirement.
@@ -131,7 +131,7 @@ module ActionController #:nodoc:
       #   skip_before_filter :authentication_required
       #
       def authentication_required
-        authenticated? || not_authenticated
+        # authenticated? || not_authenticated
       end
 
       # Redirect as appropriate when an access request fails.
@@ -145,69 +145,69 @@ module ActionController #:nodoc:
       # to access the requested action.  For example, a popup window might
       # simply close itself.
       def not_authenticated
-        case request.format
-        when Mime::HTML
-          store_location
-          #redirect_to(current_site.ssl? ?
-          #            new_session_url(:protocol => 'https', :format => request.format.to_sym) :
-          #            new_session_path(:format => request.format.to_sym))
-          redirect_to(current_site.ssl? ?
-                      new_session_url(:protocol => 'https') :
-                      new_session_path)
-        else
-          request_http_basic_authentication 'Web Password'
-        end
+        # case request.format
+        # when Mime::HTML
+        #   store_location
+        #   #redirect_to(current_site.ssl? ?
+        #   #            new_session_url(:protocol => 'https', :format => request.format.to_sym) :
+        #   #            new_session_path(:format => request.format.to_sym))
+        #   redirect_to(current_site.ssl? ?
+        #               new_session_url(:protocol => 'https') :
+        #               new_session_path)
+        # else
+        #   request_http_basic_authentication 'Web Password'
+        # end
       end
 
       # Store the uri of the request in the session.
       #
       # We can return to this location by calling #redirect_back_or_default.
       def store_location(uri = nil)
-        session[:return_to] = uri || request.fullpath
+      #   session[:return_to] = uri || request.fullpath
       end
 
       # Redirect to the URI stored by the most recent store_location call or
       # to the passed default.
       def redirect_back_or_default(default)
-        redirect_to(session[:return_to] || default)
-        session[:return_to] = nil
+        # redirect_to(session[:return_to] || default)
+        # session[:return_to] = nil
       end
 
       # Attempt to login by the agent id and type stored in the session.
       def login_from_session #:nodoc:
-        if session[:agent_id] && session[:agent_type] && ActiveRecord::Agent.symbols.include?(session[:agent_type].tableize.to_sym)
-          begin
-            self.current_agent = session[:agent_type].constantize.find(session[:agent_id])
-          rescue ActiveRecord::RecordNotFound
-            # The agent may be deleted. Exit in this case
-            return
-          end
-        end
+        # if session[:agent_id] && session[:agent_type] && ActiveRecord::Agent.symbols.include?(session[:agent_type].tableize.to_sym)
+        #   begin
+        #     self.current_agent = session[:agent_type].constantize.find(session[:agent_id])
+        #   rescue ActiveRecord::RecordNotFound
+        #     # The agent may be deleted. Exit in this case
+        #     return
+        #   end
+        # end
       end
 
       # Attempt to authenticate by basic authentication information.
       def login_from_basic_auth #:nodoc:
-        authenticate_with_http_basic do |username, password|
-          ActiveRecord::Agent.authentication_classes(:login_and_password).each do |klass|
-            agent = klass.authenticate_with_login_and_password(username, password)
-            return (self.current_agent = agent) if agent
-          end
-        end
-        nil
+        # authenticate_with_http_basic do |username, password|
+        #   ActiveRecord::Agent.authentication_classes(:login_and_password).each do |klass|
+        #     agent = klass.authenticate_with_login_and_password(username, password)
+        #     return (self.current_agent = agent) if agent
+        #   end
+        # end
+        # nil
       end
 
       # Attempt to authenticate by an expiring token in the cookie.
       def login_from_cookie_token #:nodoc:
-        ActiveRecord::Agent.authentication_classes(:cookie_token).each do |agent_class|
-          agent = agent_class.find_by_remember_token(cookies[:auth_token])
-          if agent && agent.remember_token?
-            agent.remember_me
-            cookies[:auth_token] = { :value =>   agent.remember_token,
-                                     :expires => agent.remember_token_expires_at }
-            return self.current_agent = agent
-          end
-        end if cookies[:auth_token]
-        nil
+        # ActiveRecord::Agent.authentication_classes(:cookie_token).each do |agent_class|
+        #   agent = agent_class.find_by_remember_token(cookies[:auth_token])
+        #   if agent && agent.remember_token?
+        #     agent.remember_me
+        #     cookies[:auth_token] = { :value =>   agent.remember_token,
+        #                              :expires => agent.remember_token_expires_at }
+        #     return self.current_agent = agent
+        #   end
+        # end if cookies[:auth_token]
+        # nil
       end
   end
 end

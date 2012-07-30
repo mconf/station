@@ -1,19 +1,5 @@
 Rails.application.routes.draw do
 
-  resource :session
-
-  match 'login', :to => 'sessions#new', :as => 'login'
-  match 'logout', :to => 'sessions#destroy', :as => 'logout'
-
-  if ActiveRecord::Agent.activation_class
-    match 'activate/:activation_code', :to => "#{ActiveRecord::Agent.activation_class.to_s.tableize}#activate",
-      :as => 'activate', :activation_code => nil
-    match 'lost_password', :to => "#{ActiveRecord::Agent.activation_class.to_s.tableize}#lost_password",
-      :as => 'lost_password'
-    match 'reset_password/:reset_password_code', :to => "#{ActiveRecord::Agent.activation_class.to_s.tableize}#reset_password",
-      :as => 'reset_password', :reset_password_code => nil
-  end
-
   resources :tags
 
   resource :site do

@@ -7,9 +7,9 @@ module ActiveRecord #:nodoc:
     # TODO: Currently, only affects LoginAndPassword authentication
     module Activation
       def self.included(base) #:nodoc:
-        base.class_eval do
-          before_create "initialize_activation"
-        end
+        # base.class_eval do
+        #   before_create "initialize_activation"
+        # end
       end
 
       # Activates the agent in the database.
