@@ -1,11 +1,7 @@
 require 'rails'
 
 module Station
-  require 'active_record/agent/activation'
   require 'active_record/agent/invite'
-  require 'active_record/agent/password_reset'
-  require 'active_record/agent/authentication/cookie_token'
-  require 'active_record/agent/authentication/login_and_password'
   require 'active_record/content/inquirer'
   require 'active_record/content/inquirer_proxy'
   require 'active_record/acts_as'
@@ -26,15 +22,9 @@ module Station
   require 'action_view/helpers/station_helper'
   require 'action_view/helpers/tags_helper'
 
-  require 'action_controller/agents/activation'
-  require 'action_controller/agents/password_reset'
-  require 'action_controller/sessions/cookie_token'
-  require 'action_controller/sessions/login_and_password'
   require 'action_controller/agents'
-  require 'action_controller/authentication'
   require 'action_controller/authorization'
   require 'action_controller/logos'
-  require 'action_controller/sessions'
   require 'action_controller/station'
   require 'action_controller/station_resources'
 

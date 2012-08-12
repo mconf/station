@@ -136,7 +136,7 @@ module ActionController #:nodoc:
       @resource = resource_class.new(resource_params)
       instance_variable_set "@#{ model_class.to_s.underscore }", @resource
 
-      @resource.author = current_agent if @resource.respond_to?(:author=)
+      @resource.author = current_user if @resource.respond_to?(:author=)
       @resource.container = path_container  if @resource.respond_to?(:container=)
 
       respond_to do |format|
@@ -176,7 +176,7 @@ module ActionController #:nodoc:
       set_params_from_raw_post
 
       resource.attributes = params[model_class.to_s.underscore.to_sym]
-      resource.author = current_agent if resource.respond_to?(:author=) && resource.changed?
+      resource.author = current_user if resource.respond_to?(:author=) && resource.changed?
 
       respond_to do |format| 
         #FIXME: DRY

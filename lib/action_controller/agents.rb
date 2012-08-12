@@ -4,14 +4,9 @@ module ActionController #:nodoc:
     class << self
       def included(base) #:nodoc:
         base.send :include, ActionController::Station unless base.ancestors.include?(ActionController::Station)
-        base.send :include, ActionController::Authentication unless base.ancestors.include?(ActionController::Authentication)
         if base.model_class.agent_options[:activation] &&
            ! base.ancestors.include?(ActionController::Agents::Activation)
           base.send :include, ActionController::Agents::Activation
-        end
-        if base.model_class.agent_options[:authentication].include?(:login_and_password) &&
-           ! base.ancestors.include?(ActionController::Agents::PasswordReset)
-          base.send :include, ActionController::Agents::PasswordReset
         end
       end
     end

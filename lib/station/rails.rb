@@ -36,9 +36,8 @@ module Station
 
       # ActionController
       require "action_controller/station"
-      require "action_controller/authentication"
       require "action_controller/authorization"
-      for mod in [ ActionController::Station, ActionController::Authentication, ActionController::Authorization ]
+      for mod in [ ActionController::Station, ActionController::Authorization ]
         ActionController::Base.send(:include, mod) unless ActionController::Base.ancestors.include?(mod)
       end
 
@@ -57,7 +56,6 @@ module Station
 
       # Inflections
       ActiveSupport::Inflector.inflections do |inflect|
-        inflect.uncountable 'cas'
         inflect.uncountable 'anonymous'
       end
 

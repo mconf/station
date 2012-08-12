@@ -2,8 +2,6 @@ module ActionController #:nodoc:
   # Authorization module provides your Controllers and Views with methods and filters
   # to control which actions Agents can perform
   #
-  # This module uses Agent identification support from ActionController::Authentication
-  #
   # == Authorization Filters
   # You can define authorization filters in the following way:
   #   authorization_filter permission, auth_object, filter_options
@@ -29,9 +27,7 @@ module ActionController #:nodoc:
   #  end
   #
   module Authorization
-    # Inclusion hook to add ActionController::Authentication
     def self.included(base) #:nodoc:
-      base.send :include, ActionController::Authentication unless base.ancestors.include?(ActionController::Authentication)
 
       base.helper_method :authorize?, :authorized?
       # Deprecated
@@ -70,7 +66,7 @@ module ActionController #:nodoc:
     def authorize?(permission = nil)
       permission ||= action_name.to_sym
 
-      default_authorization_instance.authorize?(permission, :to => current_agent)
+      default_authorization_instance.authorize?(permission, :to => current_user)
     end
 
     # If user is not authenticated, return not_authenticated to allow identification.
@@ -105,7 +101,7 @@ module ActionController #:nodoc:
                      auth_object_name
                    end
 
-      auth_object.authorize?(permission, :to => current_agent)
+      auth_object.authorize?(permission, :to => current_user)
     end
   end
 end
