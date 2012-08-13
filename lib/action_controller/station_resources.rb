@@ -30,18 +30,10 @@ module ActionController #:nodoc:
     #
     #   GET /resources
     #   GET /resources.xml
-    #   GET /resources.atom
     #
     #   GET /:container_type/:container_id/contents
     #   GET /:container_type/:container_id/contents.xml
-    #   GET /:container_type/:container_id/contents.atom
     def index
-      # AtomPub feeds are ordered by updated_at
-      # TODO: move this to ActionController::Base#params_parser
-      if request.format == Mime::ATOM
-        params[:order], params[:direction] = "updated_at", "DESC"
-      end
-
       @conditions ||= nil
 
       resources
@@ -53,7 +45,6 @@ module ActionController #:nodoc:
           format.html # index.html.erb
           format.js
           format.xml  { render :xml => @resources }
-          format.atom
         end
       end
     end
@@ -84,8 +75,7 @@ module ActionController #:nodoc:
         format.html # show.html.erb
         format.js
         format.xml  { render :xml => @resource }
-        format.atom
-  
+
         # Add Resource format Mime Type for resource with Attachments
         format.send(resource.mime_type.to_sym.to_s) {
           send_data resource.__send__(:current_data),
@@ -151,18 +141,12 @@ module ActionController #:nodoc:
                    :status   => :created, 
                    :location => @resource 
           }
-          format.atom {
-            render :action => 'show',
-                   :status => :created,
-                   :location => polymorphic_url(@resource, :format => :atom)
-          }
         else
           format.html { 
             after_create_with_errors
           }
           format.js
           format.xml  { render :xml => @resource.errors, :status => :unprocessable_entity }
-          format.atom { render :xml => @resource.errors.to_xml, :status => :bad_request }
         end
       end
     end
@@ -199,13 +183,6 @@ module ActionController #:nodoc:
         format.js {
           resource.save
         }
-        format.atom {
-          if resource.save
-            head :ok
-          else
-            render :xml => @resource.errors.to_xml, :status => :not_acceptable
-          end
-        }
 
         format.send(resource.format) {
           if resource.save
@@ -228,7 +205,6 @@ module ActionController #:nodoc:
           }
           format.js
           format.xml  { head :ok }
-          format.atom { head :ok }
         else
           format.html {
             flash[:error] = t(:not_deleted, :scope => resource.class.to_s.underscore)
@@ -237,7 +213,6 @@ module ActionController #:nodoc:
           }
           format.js
           format.xml  { render :xml => @resource.errors.to_xml }
-          format.atom { render :xml => @resource.errors.to_xml }
         end
       end
     end

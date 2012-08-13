@@ -17,12 +17,6 @@ module ActionController #:nodoc:
     end
 
     def index
-      # AtomPub feeds are ordered by Entry#updated_at
-      # TODO: move this to ActionController::Base#params_parser
-      if request.format == Mime::ATOM
-        params[:order], params[:direction] = "updated_at", "DESC"
-      end
-
       @agents = model_class.roots.in(path_container).column_sort(params[:order], params[:direction]).paginate(:page => params[:page])
       instance_variable_set "@#{ model_class.to_s.tableize }", @agents
 
@@ -30,17 +24,14 @@ module ActionController #:nodoc:
         format.html # index.html.erb
         format.js
         format.xml  { render :xml => @agents }
-        format.atom
       end
     end
 
     # Show agent
     #
-    # Responds to Atom Service format, returning the Containers this Agent can post to
     def show
       respond_to do |format|
         format.html
-        format.atomsvc
         format.xrds
       end
     end

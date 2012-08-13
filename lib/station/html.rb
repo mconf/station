@@ -31,12 +31,6 @@ module Station #:nodoc:
       }
     end
 
-    def atom_links
-      head_links.select{ |l|
-        l['type'].try(:match, /application\/atom\+xml/i)
-      }
-    end
-
     def rss_links
       head_links.select{ |l|
         l['type'].try(:match, /application\/rss\+xml/i)
@@ -52,12 +46,6 @@ module Station #:nodoc:
     def foaf_links
       rdf_links.select{ |l|
         l['title'].try(:match, /^foaf$/i)
-      }
-    end
-
-    def atom_service_links
-      head_links.select{ |l|
-        l['rel'].try(:match, /^service$/i)
       }
     end
 
