@@ -45,14 +45,6 @@ module ActiveRecord #:nodoc:
         extend  ClassMethods
         include InstanceMethods
 
-        authorizing do |agent, permission|
-          p = stage_permissions.find_by_user_id(agent.id, :include => { :role => :permissions })
-
-          return nil unless p.present?
-
-          p.role.permissions.map(&:to_array).include?(Array(permission)) || nil
-        end
-
         send :attr_accessor, :_stage_permissions
         after_save :_save_stage_permissions!
       end
@@ -118,7 +110,7 @@ module ActiveRecord #:nodoc:
 
         # Uses eager loading.
         # Compact the array, the agent may not be found because of default scopes.
-        stage_permissions.all(:conditions => conditions, :include => :user).map(&:user).compact
+        stage_permissions.where(conditions).includes(:user).map(&:user).compact
       end
 
       private

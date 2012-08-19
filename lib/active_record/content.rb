@@ -70,7 +70,7 @@ module ActiveRecord #:nodoc:
         ActiveRecord::Content.register_class(self)
 
         options[:reflection]  ||= :container
-        options[:authorization] = true if options[:authorization].nil?
+        # options[:authorization] = true if options[:authorization].nil?
 
         cattr_reader :content_options
         class_variable_set "@@content_options", options
@@ -92,10 +92,10 @@ module ActiveRecord #:nodoc:
 
         acts_as_sortable
 
-        if options[:authorization]
-          authorization_delegate :container, :as => :content
-          authorization_delegate :container
-        end
+        # if options[:authorization]
+        #   authorization_delegate :container, :as => :content
+        #   authorization_delegate :container
+        # end
 
         extend  ClassMethods
         include InstanceMethods

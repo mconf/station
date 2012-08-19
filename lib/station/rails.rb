@@ -13,8 +13,8 @@ module Station
       require 'station/core_ext'
 
       # ActiveRecord
-      require 'active_record/authorization'
-      ActiveRecord::Base.send :include, ActiveRecord::Authorization
+      # require 'active_record/authorization'
+      # ActiveRecord::Base.send :include, ActiveRecord::Authorization
 
       require 'active_record/acts_as'
       ActiveRecord::Base.extend ActiveRecord::ActsAs
@@ -36,8 +36,8 @@ module Station
 
       # ActionController
       require "action_controller/station"
-      require "action_controller/authorization"
-      for mod in [ ActionController::Station, ActionController::Authorization ]
+      # require "action_controller/authorization"
+      for mod in [ ActionController::Station ] # , ActionController::Authorization
         ActionController::Base.send(:include, mod) unless ActionController::Base.ancestors.include?(mod)
       end
 
@@ -122,24 +122,24 @@ module Station
       #   end
       # end
 
-      ActiveSupport.on_load(:active_record) do
+      # ActiveSupport.on_load(:active_record) do
 
-        # Modifications of Station Engine
-        # In Global authorization, users that are superusers are gods
-        # This module allows implementing this feature in all classes that implement authorizes?
-        module ActiveRecord::Authorization::InstanceMethods
-          alias authorize_without_superuser authorize?
+      #   # Modifications of Station Engine
+      #   # In Global authorization, users that are superusers are gods
+      #   # This module allows implementing this feature in all classes that implement authorizes?
+      #   module ActiveRecord::Authorization::InstanceMethods
+      #     alias authorize_without_superuser authorize?
 
-          def authorize_with_superuser(permission, options = { })
-            return true if options[:to] && options[:to].superuser
+      #     def authorize_with_superuser(permission, options = { })
+      #       return true if options[:to] && options[:to].superuser
 
-            authorize_without_superuser(permission, options)
-          end
+      #       authorize_without_superuser(permission, options)
+      #     end
 
-          alias authorize? authorize_with_superuser
-        end
+      #     alias authorize? authorize_with_superuser
+      #   end
 
-      end
+      # end
 
     end
 

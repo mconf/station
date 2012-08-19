@@ -17,7 +17,7 @@ module ActionController #:nodoc:
 
         base.send :rescue_from, ContainerError, :with => :container_error
 
-        base.send :include, ActionController::Authorization unless base.ancestors.include?(ActionController::Authorization)
+        # base.send :include, ActionController::Authorization unless base.ancestors.include?(ActionController::Authorization)
       end
     end
 
