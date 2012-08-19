@@ -133,28 +133,6 @@ es:
   password_has_been_reset_with_agent: "{{agent}}, su contraseña se ha cambiado"
   password_reset: "Cambio de Contraseña"
   password_reset_link_sent_to_email_address: "Se ha enviado a la dirección de correo un enlace para cambiar la contraseña"
-  performance: 
-    change: Cambiar
-    confirm_delete: "¿Borrar el Integrante?"
-    create: 
-      one: "Crear Integrante"
-      other: "Crear Integrantes"
-    delete: 
-      one: "Borrar Integrante"
-      other: "Borrar Integrantes"
-    errors: 
-      stage_should_not_run_out_of_performances_with_first_role: "El escenario no debería quedarse sin integrantes del primer rol."
-      the_role_should_not_belong_to_a_different_stage_type: "El rol no debería pertenecer a un tipo de escenario diferente."
-    new: "Nuevo Integrante"
-    other: Integrantes
-    other_in: "Integrantes de {{stage}}"
-    read: 
-      one: "Ver Integrante"
-      other: "Ver Integrantes"
-    update: 
-      one: "Actualizar Integrante"
-      other: "Actualizar Integrantes"
-    without_roles_available: "No hay ningún Rol disponible. Los Integrantes no se pueden establecer."
   permission: 
     other: Permisos
   please_activate_account: "Por favor, active su cuenta"

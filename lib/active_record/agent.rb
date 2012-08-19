@@ -78,11 +78,10 @@ module ActiveRecord #:nodoc:
           include Invite
         end
 
-        has_many :agent_performances,
-                 :class_name => "Performance",
+        has_many :agent_permissions,
+                 :class_name => "Permission",
                  :dependent => :destroy,
-                 :as => :agent
-
+                 :foreign_key => "user_id"
 
         extend  ClassMethods
         include InstanceMethods
@@ -101,14 +100,19 @@ module ActiveRecord #:nodoc:
 
     module InstanceMethods
 
-      # All Stages in which this Agent has a Performance
+      # All Stages in which this Agent has a Permission
       #
       # Options:
       # type:: the class of the Stage requested (Doesn't work with STI!)
       #
       # Uses +compact+ to remove nil instances, which may appear because of default_scopes
       def stages(options = {})
-        agent_performances.stage_type(options[:type]).all(:include => :stage).map(&:stage).compact
+        if options[:type]
+          query = agent_permissions.where(:subject_type => options[:type])
+        else
+          query = agent_permissions
+        end
+        query.includes(:subject).all.map(&:subject).compact
       end
 
       # Agents that have at least one Role in stages

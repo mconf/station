@@ -133,28 +133,6 @@ en:
   password_has_been_reset_with_agent: "{{agent}}, your password has been reset"
   password_reset: "Password Reset"
   password_reset_link_sent_to_email_address: "A password reset link has been sent to email address"
-  performance: 
-    change: Change
-    confirm_delete: "Delete Performance?"
-    create: 
-      one: "Create Performance"
-      other: "Create Performances"
-    delete: 
-      one: "Delete Performance"
-      other: "Delete Performances"
-    errors: 
-      stage_should_not_run_out_of_performances_with_first_role: "The stage should not run out of performances with the first role."
-      the_role_should_not_belong_to_a_different_stage_type: "The role should not belong to a different stage type."
-    new: "New Performance"
-    other: Performances
-    other_in: "Performances in {{stage}}"
-    read: 
-      one: "Read Performance"
-      other: "Read Performances"
-    update: 
-      one: "Update Performance"
-      other: "Update Performances"
-    without_roles_available: "The aren't any Roles avaible. Performances can't be set."
   permission: 
     other: "Access rights"
   please_activate_account: "Please activate your new account"

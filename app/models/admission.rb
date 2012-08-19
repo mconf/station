@@ -29,7 +29,7 @@ class Admission < ActiveRecord::Base
   validate :candidate_without_role, :on => :create
   validate :candidate_is_not_introducer
 
-  after_save :to_performance!
+  after_save :to_permission!
 
   acts_as_sortable :columns => [ :candidate,
                                  :email,
@@ -104,7 +104,7 @@ class Admission < ActiveRecord::Base
     end
   end
 
-  def to_performance!
+  def to_permission!
     return unless recently_processed? &&
                   accepted? &&
                   group.present? &&
@@ -112,8 +112,8 @@ class Admission < ActiveRecord::Base
                   candidate.present? &&
                   ! group.role_for?(candidate)
 
-    Performance.create! :agent => candidate,
-                        :stage => group,
-                        :role  => role
+    Permission.create! :agent => candidate,
+                       :subject => group,
+                       :role  => role
   end
 end

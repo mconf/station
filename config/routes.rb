@@ -6,7 +6,6 @@ Rails.application.routes.draw do
     if Site.table_exists?
 # TODO
       with_options :requirements => { :site_id => Site.current.id } do
-        resources :performances
         resources *ActiveRecord::Resource.symbols
       end
 #
@@ -25,9 +24,6 @@ Rails.application.routes.draw do
       resources :tags
     end
   end
-  resources :sources do
-    get :import, :as => :member
-  end
 
   resources :logos
 
@@ -35,16 +31,12 @@ Rails.application.routes.draw do
     resource :logo
   end
 
-  resources :roles
   resources :invitations do
     get :accept, :as => :member
   end
 
   resources(*ActiveRecord::Stage.symbols - Array(:sites)) do
-    resources :performances
     resources :invitations
     resources :join_requests
   end
-
-  resources :performances
 end

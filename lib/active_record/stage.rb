@@ -1,7 +1,7 @@
 module ActiveRecord #:nodoc:
   # Each Stage defines a RBAC framework in your application.
   #
-  # Stages have many Performances. A Performance defines the Role an Agent plays in the Stage
+  # Stages have many Permissions. A Permission defines the Role an Agent plays in the Stage
   #
   # Include Stage functionality in your models using ActsAsMethods#acts_as_stage
   module Stage
@@ -24,11 +24,11 @@ module ActiveRecord #:nodoc:
         cattr_reader :stage_options
         class_variable_set "@@stage_options", options
 
-        has_many :stage_performances,
-                 :class_name => "Performance",
-                 # Use delete_all to avoid Performance#avoid_destroying_only_one_with_highest_role callback
+        has_many :stage_permissions,
+                 :class_name => "Permission",
+                 # Use delete_all to avoid Permission#avoid_destroying_only_one_with_highest_role callback
                  :dependent => :delete_all,
-                 :as => :stage
+                 :as => :subject
 
         if options[:admissions]
           has_many :admissions,
@@ -46,15 +46,15 @@ module ActiveRecord #:nodoc:
         include InstanceMethods
 
         authorizing do |agent, permission|
-          p = stage_performances.find_by_agent_id_and_agent_type(agent.id, agent.class.base_class.to_s, :include => { :role => :permissions })
+          p = stage_permissions.find_by_user_id(agent.id, :include => { :role => :permissions })
 
           return nil unless p.present?
 
           p.role.permissions.map(&:to_array).include?(Array(permission)) || nil
         end
 
-        send :attr_accessor, :_stage_performances
-        after_save :_save_stage_performances!
+        send :attr_accessor, :_stage_permissions
+        after_save :_save_stage_permissions!
       end
     end
 
@@ -72,7 +72,7 @@ module ActiveRecord #:nodoc:
 
     # Instance methods can be redefined in each Model for custom features
     module InstanceMethods
-      # True if agent has a Performance in this Stage.
+      # True if agent has a Permission in this Stage.
       #
       # Options:
       # name:: Name of the Role
@@ -90,11 +90,10 @@ module ActiveRecord #:nodoc:
       def role_for(agent)
         #FIXME: Role named scope
         Role.find :first,
-                  :joins => :performances,
-                  :conditions => { 'performances.agent_id'   => agent.id,
-                                   'performances.agent_type' => agent.class.base_class.to_s,
-                                   'performances.stage_id'   => self.id,
-                                   'performances.stage_type' => self.class.base_class.to_s },
+                  :joins => :permissions,
+                  :conditions => { 'permissions.user_id'   => agent.id,
+                                   'permissions.subject_id'   => self.id,
+                                   'permissions.subject_type' => self.class.base_class.to_s },
                   :include => :permissions
       end
       
@@ -119,29 +118,29 @@ module ActiveRecord #:nodoc:
 
         # Uses eager loading.
         # Compact the array, the agent may not be found because of default scopes.
-        stage_performances.all(:conditions => conditions, :include => :agent).map(&:agent).compact
+        stage_permissions.all(:conditions => conditions, :include => :user).map(&:user).compact
       end
 
       private
 
-      def _save_stage_performances! #:nodoc:
-        return unless @_stage_performances
+      def _save_stage_permissions! #:nodoc:
+        return unless @_stage_permissions
 
-        Performance.transaction do
-          old_ps = stage_performances.clone
+        Permission.transaction do
+          old_ps = stage_permissions.clone
 
-          @_stage_performances.each do |new_p|
-            present_p = stage_performances.find :first, :conditions => new_p
+          @_stage_permissions.each do |new_p|
+            present_p = stage_permissions.find :first, :conditions => new_p
 
             present_p ?
               old_ps.delete(present_p) :
-              stage_performances.create!(new_p)
+              stage_permissions.create!(new_p)
           end
 
           old_ps.map(&:destroy)
         end
 
-        @_stage_performances = nil
+        @_stage_permissions = nil
       end
     end
   end
