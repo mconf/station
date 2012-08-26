@@ -33,12 +33,6 @@ module ActiveRecord #:nodoc:
   # in each Stage they participate. This Role defines the permissions the Agent can perform in the
   # scope of this Stage.
   #
-  # == Singular Agents
-  # Singular Agents are special models with Agent features. Each one represents a paradigm:
-  # * Anonymous: the Agent behind a request without authentication credentials.
-  # * Anyone: represents any Agent instance.
-  # * CronAgent: the time-based job scheduler in Unix-like computer operating systems.
-  #
   module Agent
 
     class << self

@@ -128,12 +128,12 @@ module ActionView #:nodoc:
         logotype(resource, options)
       end
 
-      # Prints link_logotype of the resource's author. If the resource hasn't author, uses Anonymous user.
+      # Prints link_logotype of the resource's author.
       def link_author(resource, options = {})
         author = resource.respond_to?(:author) && resource.author ?
                    resource.author :
-                   Anonymous.current
-        link_logotype(author, options)
+                   nil
+        link_logotype(author, options) unless author.nil?
       end
 
       # Show a preview of content if it's not null and it isn't a new record.

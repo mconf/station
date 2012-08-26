@@ -174,7 +174,7 @@ module ActiveRecord #:nodoc:
         end
 
         if respond_to?(:author)
-          self.author = Anonymous.current
+          self.author = nil
         end
 
         self

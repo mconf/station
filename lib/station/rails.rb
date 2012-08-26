@@ -15,14 +15,6 @@ module Station
       require 'active_record/acts_as'
       ActiveRecord::Base.extend ActiveRecord::ActsAs
 
-      # Initialize all Singular Agents
-      if SingularAgent.table_exists?
-        #SingularAgent
-        Anonymous.current
-        Anyone.current
-        Authenticated.current
-      end
-
       # Mime Types
       # Redefine Mime::ATOM to include "application/atom+xml;type=entry"
       # Mime::Type.register "application/atom+xml", :atom, [ "application/atom+xml;type=entry" ]
@@ -48,11 +40,6 @@ module Station
       %w( logo tags ).each do |item|
         require_dependency "action_view/helpers/form_#{ item }_helper"
         ActionView::Base.send :include, "ActionView::Helpers::Form#{ item.camelcase }Helper".constantize
-      end
-
-      # Inflections
-      ActiveSupport::Inflector.inflections do |inflect|
-        inflect.uncountable 'anonymous'
       end
 
       # i18n

@@ -44,7 +44,7 @@ module ActionController #:nodoc:
     def new
       @agent = model_class.new
       instance_variable_set "@#{ model_class.to_s.underscore }", @agent
-      @title = authenticated? ?
+      @title = user_signed_in? ?
         t(:new, :scope => model_class.to_s.underscore) :
         t(:join_to_site, :site => Site.current.name)
     end
@@ -53,13 +53,13 @@ module ActionController #:nodoc:
     def create
       @agent = model_class.new(params[:agent])
 
-      unless authenticated?
+      unless user_signed_in?
         cookies.delete :auth_token
       end
 
       @agent.save!
 
-      if authenticated?
+      if user_signed_in?
         redirect_to polymorphic_path(model_class.new)
         flash[:success] = t(:created, :scope => @agent.class.to_s.underscore)
       else
