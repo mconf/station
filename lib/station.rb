@@ -6,7 +6,6 @@ module Station
   require 'active_record/content/inquirer_proxy'
   require 'active_record/acts_as'
   require 'active_record/agent'
-  # require 'active_record/authorization'
   require 'active_record/container'
   require 'active_record/content'
   require 'active_record/logoable'
@@ -23,7 +22,6 @@ module Station
   require 'action_view/helpers/tags_helper'
 
   require 'action_controller/agents'
-  # require 'action_controller/authorization'
   require 'action_controller/logos'
   require 'action_controller/station'
   require 'action_controller/station_resources'
