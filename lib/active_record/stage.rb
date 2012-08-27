@@ -80,11 +80,11 @@ module ActiveRecord #:nodoc:
       # Role performed by this Agent in the Stage.
       #
       def role_for(agent)
-        #FIXME: Role named scope
+        return nil if agent.nil?
         Role.find :first,
                   :joins => :permissions,
-                  :conditions => { 'permissions.user_id'   => agent.id,
-                                   'permissions.subject_id'   => self.id,
+                  :conditions => { 'permissions.user_id' => agent.id,
+                                   'permissions.subject_id' => self.id,
                                    'permissions.subject_type' => self.class.base_class.to_s },
                   :include => :permissions
       end
