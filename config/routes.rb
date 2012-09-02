@@ -2,16 +2,6 @@ Rails.application.routes.draw do
 
   resources :tags
 
-  resource :site do
-    if Site.table_exists?
-# TODO
-      with_options :requirements => { :site_id => Site.current.id } do
-        resources *ActiveRecord::Resource.symbols
-      end
-#
-    end
-  end
-
   resources *( ( ActiveRecord::Resource.symbols |
                  ActiveRecord::Content.symbols  |
                  ActiveRecord::Agent.symbols ) -
@@ -27,8 +17,10 @@ Rails.application.routes.draw do
 
   resources :logos
 
-  resources(*(ActiveRecord::Logoable.symbols - Array(:sites))) do
-    resource :logo
+  unless ActiveRecord::Logoable.symbols.empty?
+    resources(*(ActiveRecord::Logoable.symbols - Array(:sites))) do
+      resource :logo
+    end
   end
 
   resources :invitations do
