@@ -60,7 +60,7 @@ module ActionView #:nodoc:
         end
 
         "".tap do |html|
-          classes = 'logo '
+          classes = "logo logo-#{resource.class.name.downcase} "
           classes += options[:class] if options.has_key?(:class)
           image = image_tag(logo_image_path(resource, options),
                             :alt => alt,
