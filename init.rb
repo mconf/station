@@ -13,6 +13,7 @@ ActiveSupport::Dependencies.autoload_once_paths.delete(File.expand_path(File.dir
 
 # Core Extensions
 require_dependency 'station/core_ext'
+require_dependency 'station/not_authorized'
 
 # ActiveRecord
 require_dependency 'active_record/authorization'

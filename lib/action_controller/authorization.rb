@@ -77,19 +77,7 @@ module ActionController #:nodoc:
     # Else, set HTTP Forbidden (403) response.
     def not_authorized
       return not_authenticated unless authenticated?
-      raise NotAuthorized, "Not Authorized" if is_space?(params[:controller])
-
-      respond_to do |format|
-        format.all do
-          render :text => 'Forbidden',
-                 :status => 403
-        end
-
-        format.html do
-          render(:file => "#{Rails.root.to_s}/public/403.html", 
-                 :status => 403)
-        end
-      end
+      raise ::Station::NotAuthorized
     end
 
     def authorized?(permission = nil, auth_object_name = nil) #:nodoc:
@@ -109,14 +97,5 @@ module ActionController #:nodoc:
       auth_object.authorize?(permission, :to => current_agent)
     end
 
-    def is_space?(controller)
-      if (controller == "spaces" or controller == "users" or
-          controller == "posts" or controller == "attachments" or
-          controller == "webconferences")
-        return true
-      else
-        return false
-      end
-    end
   end
 end
