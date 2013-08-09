@@ -23,12 +23,4 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :invitations do
-    get :accept, :as => :member
-  end
-
-  resources(*ActiveRecord::Stage.symbols - Array(:sites)) do
-    resources :invitations
-    resources :join_requests
-  end
 end
