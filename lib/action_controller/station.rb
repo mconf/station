@@ -6,7 +6,6 @@ module ActionController
     class << self
       def included(base) #:nodoc:
         base.helper_method :model_class
-        base.helper_method :path_container
 
         class << base
           def model_class
@@ -65,28 +64,6 @@ module ActionController
       }.compact
     end
 
-
-    # Find all Containers in the path, using records_from_path
-    #
-    # Options:
-    # ancestors:: include containers's containers
-    # type:: the class of the searched containers
-    def path_containers(options = {})
-       @path_containers ||= records_from_path(:acts_as => :container)
-
-       candidates = options[:ancestors] ?
-         @path_containers.map{ |c| c.container_and_ancestors }.flatten.uniq :
-         @path_containers.dup
-
-       filter_type(candidates, options[:type])
-    end
-
-    # Find current Container using path from the request
-    #
-    # Uses path_containers. Same options.
-    def path_container(options = {})
-      path_containers(options).first
-    end
 
     protected
 

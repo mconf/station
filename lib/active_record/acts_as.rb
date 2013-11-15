@@ -4,7 +4,6 @@ module ActiveRecord #:nodoc:
   module ActsAs #:nodoc:
     # All ActiveRecord addons
     Features = [ :resource,
-                 :container,
                  :content,
                  :taggable,
                  :sortable ]
