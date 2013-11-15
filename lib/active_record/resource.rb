@@ -61,9 +61,7 @@ module ActiveRecord #:nodoc:
           alias_attribute :media, :uploaded_data
         end
 
-        unless acts_as?(:agent)
-          attr_protected :author, :author_id, :author_type
-        end
+        attr_protected :author, :author_id, :author_type
 
         cattr_reader :resource_options
         class_variable_set "@@resource_options", options

@@ -5,7 +5,6 @@ module ActiveRecord #:nodoc:
     # All ActiveRecord addons
     Features = [ :resource,
                  :container,
-                 :agent,
                  :content,
                  :stage,
                  :taggable,

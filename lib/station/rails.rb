@@ -24,7 +24,6 @@ module Station
 
       # ActionController
       require "action_controller/station"
-      # require "action_controller/authorization"
       for mod in [ ActionController::Station ] # , ActionController::Authorization
         ActionController::Base.send(:include, mod) unless ActionController::Base.ancestors.include?(mod)
       end
