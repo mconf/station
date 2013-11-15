@@ -43,7 +43,7 @@ module ActiveRecord #:nodoc:
       def _add_tags incoming
         tag_cast_to_string(incoming).each do |tag_name|
           begin
-            tag = ( self.class.taggable_options[:container] ? 
+            tag = ( self.class.taggable_options[:container] ?
                    Tag.find_or_create_by_name_and_container_id_and_container_type(tag_name,
                                                                                   self.container.id,
                                                                                   self.container.class.base_class.to_s) :
@@ -55,36 +55,30 @@ module ActiveRecord #:nodoc:
           end
         end
       end
-    
-      # Removes tags from <tt>self</tt>. Accepts a string of tagnames, an array of tagnames, an array of ids, or an array of Tags.  
+
+      # Removes tags from <tt>self</tt>. Accepts a string of tagnames, an array of tagnames, an array of ids, or an array of Tags.
       def _remove_tags outgoing
         outgoing = tag_cast_to_string(outgoing)
-       
+
         taggings.select{ |t| outgoing.include?(t.tag.name) }.map(&:destroy)
       end
 
-      # Returns the tags on <tt>self</tt> as a string.
-      def tag_list
-        tags.reload
-        tags.to_s
-      end
-   
       # Replace the existing tags on <tt>self</tt>. Accepts a string of tagnames, an array of tagnames, an array of ids, or an array of Tags.
-      def tag_with list    
+      def tag_with list
         list = tag_cast_to_string(list)
-               
+
         # Transactions may not be ideal for you here; be aware.
-        Tag.transaction do 
+        Tag.transaction do
           current = tags.map(&:name)
           _add_tags(list - current)
           _remove_tags(current - list)
         end
-        
+
         self
       end
 
-      
-      private 
+
+      private
 
       def _save_tags!
         return unless @_tags
@@ -96,7 +90,7 @@ module ActiveRecord #:nodoc:
 
         @_tags = nil
       end
-      
+
       def tag_cast_to_string obj #:nodoc:
         case obj
           when Array
@@ -107,15 +101,15 @@ module ActiveRecord #:nodoc:
                 else
                   raise "Invalid type"
               end
-            end              
+            end
           when String
-            obj = obj.split(Tag::DELIMITER).map do |tag_name| 
+            obj = obj.split(Tag::DELIMITER).map do |tag_name|
               tag_name.strip.squeeze(" ")
             end
           else
             raise "Invalid object of class #{obj.class} as tagging method parameter"
         end.flatten.compact.uniq
-      end 
+      end
     end
   end
 end

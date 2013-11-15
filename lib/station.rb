@@ -13,9 +13,6 @@ module Station
   require 'active_record/stage'
   require 'active_record/taggable'
 
-  require 'action_view/helpers/form_tags_helper'
-  require 'action_view/helpers/sortable_helper'
-  require 'action_view/helpers/station_helper'
   require 'action_view/helpers/tags_helper'
 
   require 'action_controller/agents'

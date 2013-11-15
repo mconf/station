@@ -68,7 +68,7 @@ module ActionController #:nodoc:
       end
 
       if params[:thumbnail] && resource.respond_to?(:thumbnails)
-        @resource = resource.thumbnails.find_by_thumbnail(params[:thumbnail]) 
+        @resource = resource.thumbnails.find_by_thumbnail(params[:thumbnail])
       end
 
       instance_variable_set "@#{ model_class.to_s.underscore }", resource
@@ -85,7 +85,7 @@ module ActionController #:nodoc:
         format.js
         format.xml  { render :xml => @resource }
         format.atom
-  
+
         # Add Resource format Mime Type for resource with Attachments
         format.send(resource.mime_type.to_sym.to_s) {
           send_data resource.__send__(:current_data),
@@ -141,15 +141,15 @@ module ActionController #:nodoc:
 
       respond_to do |format|
         if @resource.save
-          format.html { 
+          format.html {
             flash[:success] = t(:created, :scope => @resource.class.to_s.underscore)
             after_create_with_success
           }
           format.js
-          format.xml  { 
-            render :xml      => @resource, 
-                   :status   => :created, 
-                   :location => @resource 
+          format.xml  {
+            render :xml      => @resource,
+                   :status   => :created,
+                   :location => @resource
           }
           format.atom {
             render :action => 'show',
@@ -157,7 +157,7 @@ module ActionController #:nodoc:
                    :location => polymorphic_url(@resource, :format => :atom)
           }
         else
-          format.html { 
+          format.html {
             after_create_with_errors
           }
           format.js
@@ -178,7 +178,7 @@ module ActionController #:nodoc:
       resource.attributes = params[model_class.to_s.underscore.to_sym]
       resource.author = current_user if resource.respond_to?(:author=) && resource.changed?
 
-      respond_to do |format| 
+      respond_to do |format|
         #FIXME: DRY
         format.all {
           if resource.save
@@ -249,7 +249,7 @@ module ActionController #:nodoc:
     # If params[:id] isn't present, build a new Resource
     def resource
       @resource ||= if params[:id].present?
-                      instance_variable_set("@#{ model_class.to_s.underscore }", 
+                      instance_variable_set("@#{ model_class.to_s.underscore }",
                         model_class.in(path_container).find_with_param(params[:id]) ||
                         raise(ActiveRecord::RecordNotFound, "Resource not found"))
                     else
@@ -264,35 +264,7 @@ module ActionController #:nodoc:
                        model_class.roots.in(path_container).column_sort(params[:order], params[:direction]).paginate(:page => params[:page], :conditions => @conditions)
     end
 
-    # Search in the resource's containers and in the path for current Container.
-    #
-    # We start with the following assumptions:
-    # * A Container have a unique branch of nested containers in the containers tree
-    # * If we find containers of the same type in both branches (resource containers
-    # and path), they must be the same. If they aren't we assume a routing error (409 Conflict).
-    #
-    # Options:
-    # type:: the class of the container
-    def current_container(options = {})
-      find_current_container(options)
-    end
-
     private
-
-    def find_current_container(options) #:nodoc:
-      rc = resource_container(options)
-
-      path_options = options.dup
-      path_options[:ancestors] = path_options.delete(:path_ancestors)
-      pc = path_container(path_options)
-
-      if rc.present? && pc.present? &&
-           rc != pc 
-        raise ContainerError
-      end
-
-      rc || pc
-    end
 
     # Gets a container from the resource containers
     def resource_container(options = {}) #:nodoc:
@@ -309,8 +281,6 @@ module ActionController #:nodoc:
 
       candidates.first
     rescue
-      # resource can raise ActiveRecord::RecordNotFound, but current_container
-      # should not raise the error
       nil
     end
 

@@ -37,22 +37,7 @@ class Uri < ActiveRecord::Base
     nil
   end
 
-  # Returns the AtomPub Service Document associated with this URI.
-  def atompub_service_document
-    #FIXME: use html?
-    Atom::Service.discover self.uri
-  end
-
   delegate :hcard, :hcard?,
-           :foaf, :foaf?,
            :to => :html
 
-  private
-
-  # Extract service link from HTML head
-  def parse_atompub_service_link(html) #:nodoc:
-    # TODO: link service
-    # TODO: meta refresh
-    nil
-  end
 end

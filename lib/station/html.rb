@@ -49,26 +49,10 @@ module Station #:nodoc:
       }
     end
 
-    def foaf_links
-      rdf_links.select{ |l|
-        l['title'].try(:match, /^foaf$/i)
-      }
-    end
-
     def atom_service_links
       head_links.select{ |l|
         l['rel'].try(:match, /^service$/i)
       }
-    end
-
-    def rsd_links
-      head_links.select{ |l|
-        l['rel'].try(:match, /^EditURI$/i)
-      }
-    end
-
-    def foaf?
-      foaf_links.any?
     end
 
     # Find available Microformats for this HTML
@@ -80,7 +64,7 @@ module Station #:nodoc:
       Array.new
     end
 
-    # Find hCard in this HTML 
+    # Find hCard in this HTML
     #
     # Needs the {prism}[http://github.com/mwunsch/prism] gem
     def hcard

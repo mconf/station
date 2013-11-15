@@ -20,7 +20,6 @@ module ActiveRecord #:nodoc:
   #
   # There are some methods available for finding containers in paths. See
   # ActionController::Station#path_container and
-  # ActionController::Station#current_container
   #
   # == Content::Inquirer
   # A typical usage of a Container is obtaining a list of all its contents,

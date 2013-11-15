@@ -49,11 +49,6 @@ module ActiveRecord #:nodoc:
       def included(base) # :nodoc:
         # Fake scope to ActiveRecord instances that aren't Contents
         base.scope :in, lambda { |container| {} }
-        base.class_eval do
-          class << self
-            __station_deprecate_method__(:in_container, :in)
-          end
-        end
         base.extend ActsAsMethods
       end
 
@@ -170,5 +165,3 @@ module ActiveRecord #:nodoc:
     end
   end
 end
-
-

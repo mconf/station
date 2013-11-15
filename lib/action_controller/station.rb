@@ -6,39 +6,18 @@ module ActionController
     class << self
       def included(base) #:nodoc:
         base.helper_method :model_class
-        base.helper_method :current_site
         base.helper_method :path_container
-        base.helper_method :current_container
 
         class << base
           def model_class
             @model_class ||= controller_name.classify.constantize
           end
 
-          # Set params from AtomPub raw post
-          def set_params_from_atom(atom_parser, options)
-            parser = case atom_parser
-                     when Proc
-                       atom_parser
-                     when Class
-                       atom_parser.method(:atom_parser).to_proc
-                     when Symbol
-                       atom_parser.to_class.method(:atom_parser).to_proc
-                     else
-                       raise "Invalid AtomParser: #{ atom_parser.inspect }"
-                     end
-
-            before_filter options do |controller|
-              if controller.request.format == Mime::ATOM
-                controller.params = controller.params.merge(parser.call(controller.request.raw_post))
-              end
-            end
-          end
         end
       end
     end
 
-    # Returns the Model Class related to this Controller 
+    # Returns the Model Class related to this Controller
     #
     # e.g. Attachment for AttachmentsController
     #
@@ -47,14 +26,7 @@ module ActionController
       self.class.model_class
     end
 
-    # Obtains a given ActiveRecord instance from parameters. 
-    #
-    # Returns the first of records_from_path. Same options.
-    def record_from_path(options = {})
-      records_from_path(options).first
-    end
-
-    # Obtains all ActiveRecord record in parameters. 
+    # Obtains all ActiveRecord record in parameters.
     #
     # Given this URI:
     #   /projects/1/tasks/2/posts/3
@@ -93,10 +65,6 @@ module ActionController
       }.compact
     end
 
-    # An instance modeling site configuration and stage
-    def current_site
-      @current_site ||= Site.current
-    end
 
     # Find all Containers in the path, using records_from_path
     #
@@ -120,39 +88,6 @@ module ActionController
       path_containers(options).first
     end
 
-    # Must find a Container
-    #
-    # Calls path_container to figure out from params. If unsuccesful,
-    # raises ActiveRecord::RecordNotFound
-    #
-    def path_container!(options = {})
-      path_container(options) || raise(ActiveRecord::RecordNotFound)
-    end
-
-    # Find current Container using path from the request
-    #
-    # Note that in StationResouces this method is redefined looking also at the resource
-    #
-    # Options:
-    # type:: the class the container should be
-    # path_ancestors:: include the ancestors of the resources in the path
-    def current_container(options = {})
-      options[:ancestors] = options.delete(:path_ancestors)
-
-      path_container(options)
-    end
-
-    # Must find a Container
-    # 
-    # Calls current_container to figure out from params. If unsuccesful,
-    # raises ActiveRecord::RecordNotFound
-    #
-    # Takes the same options as current_container
-    # 
-    def current_container!(options = {})
-      current_container(options) || raise(ActiveRecord::RecordNotFound)
-    end
-
     protected
 
     # Extract request parameters when posting raw data
@@ -161,7 +96,7 @@ module ActionController
 
       filename = request.env["HTTP_SLUG"] || controller_name.singularize
       content_type = request.content_type
-      
+
       file = Tempfile.new("media")
       file.write request.raw_post
       (class << file; self; end).class_eval do
@@ -175,7 +110,7 @@ module ActionController
       params[content][:media]          ||= file
       params[content][:public_read]    ||= true
     end
-    
+
     private
 
     def filter_type(candidates, type) #:nodoc:
@@ -187,13 +122,6 @@ module ActionController
         selected | candidates.select{ |c| c.is_a?(type) }
       end
     end
-    
-    def save_location
-      store_location(params[:redirect_to]) if params[:redirect_to].present? &&
-      # Prevent redirecting to other host
-      params[:redirect_to] =~ /^\//
-    end 
-    
-    
+
   end
 end
