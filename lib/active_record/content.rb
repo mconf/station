@@ -85,8 +85,6 @@ module ActiveRecord #:nodoc:
           { :conditions => container_conditions(container) }
         }
 
-        acts_as_sortable
-
         # if options[:authorization]
         #   authorization_delegate :container, :as => :content
         #   authorization_delegate :container

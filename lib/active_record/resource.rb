@@ -69,8 +69,6 @@ module ActiveRecord #:nodoc:
         cattr_reader :per_page
         class_variable_set "@@per_page", options[:per_page]
 
-        acts_as_sortable
-
         extend  ClassMethods
         include InstanceMethods
       end

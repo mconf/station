@@ -6,7 +6,6 @@ module Station
   require 'active_record/acts_as'
   require 'active_record/content'
   require 'active_record/resource'
-  require 'active_record/sortable'
   require 'active_record/taggable'
 
   require 'action_view/helpers/tags_helper'

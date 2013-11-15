@@ -5,8 +5,7 @@ module ActiveRecord #:nodoc:
     # All ActiveRecord addons
     Features = [ :resource,
                  :content,
-                 :taggable,
-                 :sortable ]
+                 :taggable ]
 
     class << self
       def extended(base)
