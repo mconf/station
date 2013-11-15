@@ -6,7 +6,6 @@ module ActiveRecord #:nodoc:
     Features = [ :resource,
                  :container,
                  :content,
-                 :stage,
                  :taggable,
                  :sortable ]
 
