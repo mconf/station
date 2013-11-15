@@ -1,5 +1,5 @@
 module ActiveRecord #:nodoc:
-  # Provides some functionality to modules that enhance ActiveRecord 
+  # Provides some functionality to modules that enhance ActiveRecord
   # with acts_as_something
   module ActsAs #:nodoc:
     # All ActiveRecord addons
@@ -9,7 +9,6 @@ module ActiveRecord #:nodoc:
                  :content,
                  :stage,
                  :taggable,
-                 :logoable,
                  :sortable ]
 
     class << self

@@ -15,12 +15,4 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :logos
-
-  unless ActiveRecord::Logoable.symbols.empty?
-    resources(*(ActiveRecord::Logoable.symbols - Array(:sites))) do
-      resource :logo
-    end
-  end
-
 end

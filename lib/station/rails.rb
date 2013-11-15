@@ -31,13 +31,13 @@ module Station
 
       # ActionView
       # Helpers
-      %w( logos sortable station tags ).each do |item|
+      %w( sortable station tags ).each do |item|
         require_dependency "action_view/helpers/#{ item }_helper"
         ActionView::Base.send :include, "ActionView::Helpers::#{ item.camelcase }Helper".constantize
       end
 
       # FormHelpers
-      %w( logo tags ).each do |item|
+      %w( tags ).each do |item|
         require_dependency "action_view/helpers/form_#{ item }_helper"
         ActionView::Base.send :include, "ActionView::Helpers::Form#{ item.camelcase }Helper".constantize
       end
