@@ -89,29 +89,9 @@ module ActiveRecord #:nodoc:
         Array(resource_options[:mime_types]).map{ |m| Mime.const_get(m.to_sym.to_s.upcase) }
       end
 
-      def atom_parser(data)
-        begin
-          require 'atom/entry'
-        rescue
-          raise "Station: You need 'atom-tools' gem for AtomPub support"
-        end
-
-        unless respond_to?(:params_from_atom)
-          raise "Station: You must implement #{ self.to_s }#params_from_atom method to parse Atom entries"
-        end
-
-        params_from_atom Atom::Entry.new(data)
-      end
-
-      # Create a new instance of this Resource from Atom Entry
-      def from_atom(entry)
-        self.new(params_from_atom(entry))
-      end
-
       # List of comma separated content types accepted for this Content
       def accepts
         list = mime_types.map{ |m| Array(m.to_s) + m.instance_variable_get("@synonyms") }.flatten
-        list << "application/atom+xml;type=entry" if self.respond_to?(:params_from_atom)
         list.uniq.join(", ")
       end
     end
@@ -147,43 +127,6 @@ module ActiveRecord #:nodoc:
       # Define to_param method with acts_as_resource param option
       def to_param
         send(self.class.resource_options[:param]).to_s
-      end
-
-      # Update attributes from Atom Entry or Source entry
-      #
-      # You must implement params_from_atom class method
-      def from_atom(entry)
-        unless self.class.respond_to?(:params_from_atom)
-          raise "Station: You must implement #{ self.to_s }#params_from_atom method to parse Atom entries"
-        end
-
-        self.attributes = self.class.params_from_atom(entry)
-
-        if respond_to?(:created_at)
-          self.created_at = Time.parse(entry.published.to_s)
-        end
-
-        if respond_to?(:updated_at)
-          self.updated_at = Time.parse(entry.updated.to_s)
-        end
-
-        if respond_to?(:author)
-          self.author = nil
-        end
-
-        self
-      end
-
-      # Update attributes using params_from_atom and save the Resource
-      #
-      # Saves the record without timestamps, so created_at and updated_at are the original from the feed entry
-      def from_atom!(entry)
-        freezing_timestamps do
-          from_atom(entry)
-          save!
-        end
-
-        self
       end
 
       private
